@@ -3,13 +3,12 @@
 #PIC_DIR = ../pictures
 
 PROG = game
-SRCS = game.cpp
-OBJS = game.o
+OBJS = game.o SceneManager.o Scene.o GameObject.o ErrorHandler.o
 
 
 
 all: $(OBJS)
-	g++ $(OBJS) -o game -lsfml-graphics -lsfml-window -lsfml-system
+	g++ $(OBJS) -o game -lsfml-graphics -lsfml-window -lsfml-system -lGL
 
 %.o: %.cpp
 	g++ -c $<

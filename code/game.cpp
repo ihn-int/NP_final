@@ -1,20 +1,15 @@
-#include <SFML/Graphics.hpp>
-//#include "util.hpp"
+//#include <SFML/Graphics.hpp>
+#include "util.hpp"
+#include "GameObject.hpp"
 
 
 int main() {
-	sf::RenderWindow window(sf::VideoMode(200, 200), "Game Title");
-	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
+    SceneManager sceneManager = SceneManager("Test", 800, 600);
+    Scene startScene("Start");
+    TestObject test("test", "test");
+    startScene.addGameObject(&test);
 
-	while (window.isOpen()) {
-		sf::Event event;
-		while (window.pollEvent(event)) {
-			if (event.type == sf::Event::Closed)
-				window.close();
-		}
-		window.clear();
-		window.draw(shape);
-		window.display();
-	}
+    sceneManager.addScene(&startScene);
+    sceneManager.changeScene("Start");
+    sceneManager.runScene();
 }
