@@ -7,19 +7,22 @@ SceneManager::SceneManager(
 ) : game_title(game_title),
     width(width),
     height(height)
-    {}
+    {
+        init();
+    }
 
 void SceneManager::init() {
     // create window
-    glEnable(GL_TEXTURE_2D);
-    //sf::ContextSettings settings(24, 8, 4, 3, 3, 0, false);
+    //glEnable(GL_TEXTURE_2D);
+    sf::ContextSettings settings(24, 8, 4, 3, 3, 0, false);
     window.create(
         sf::VideoMode(width, height),
         game_title,
         sf::Style::Titlebar | sf::Style::Close
-        //settings
+        ,settings
     );
     window.setVerticalSyncEnabled(true);
+    window.setFramerateLimit(60);
 
     // Scene container
     scenes = std::vector<Scene*>(0);
