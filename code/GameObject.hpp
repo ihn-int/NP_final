@@ -18,3 +18,4 @@ public:
     std::string update(float delta_time) override;
     void blit(sf::RenderWindow*) override;
 };
+
