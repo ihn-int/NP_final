@@ -19,8 +19,8 @@ void ChatScene::init() {
     inputBox.setPosition(610, 550);
     inputBox.setFillColor(sf::Color(200, 200, 200));
 
-    outputBox.setSize(sf::Vector2f(180, 540));
-    outputBox.setPosition(610, 10);
+    outputBox.setSize(sf::Vector2f(180, 260));
+    outputBox.setPosition(610, 280);
     outputBox.setFillColor(sf::Color(220, 220, 220));
 
     inputText.setFont(font);
@@ -51,7 +51,7 @@ sf::String ChatScene::update(sf::RenderWindow* window) {
 void ChatScene::blit(sf::RenderWindow* window) {
     window->clear(sf::Color::White);
     window->draw(outputBox);
-    float yoffset = 15.0;
+    float yoffset = 285.0;
     for(auto& message : messages) {
         messageText.setString(message);
         messageText.setPosition(615, yoffset);
@@ -72,17 +72,15 @@ void ChatScene::handleInput(sf::Uint32 unicode) {
                 }
                 currentInput.clear();
                 inputText.setString(L"");
-            }
-        } else if (unicode == '\b') { // Backspace 鍵
-            if (!currentInput.empty()) {
-                currentInput.pop_back();
-                inputText.setString(currentInput);
-            }
-        } else if (unicode >= 0x4E00 && unicode <= 0x9FFF) { // 中文字符範圍
-        currentInput += static_cast<wchar_t>(unicode);
-        inputText.setString(currentInput);
-    } else if (unicode >= 32 && unicode < 127) { // 英文等基本字符
-        currentInput += static_cast<wchar_t>(unicode);
+        }
+    }if (unicode == '\b') { // Backspace 鍵
+        if (!currentInput.empty()) {
+            currentInput.pop_back();
+            inputText.setString(currentInput);
+        }
+    }
+    if (unicode < 127) { // 英文等基本字符
+        currentInput += static_cast<char>(unicode);
         inputText.setString(currentInput);
     }
 }

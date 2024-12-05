@@ -13,13 +13,13 @@ SceneManager::SceneManager(
 
 void SceneManager::init() {
     // create window
-    //glEnable(GL_TEXTURE_2D);
-    sf::ContextSettings settings(24, 8, 4, 3, 3, 0, false);
+    glEnable(GL_TEXTURE_2D);
+    sf::ContextSettings settings(24, 8, 0, 4, 3, 0, false);
     window.create(
         sf::VideoMode(width, height),
         game_title,
-        sf::Style::Titlebar | sf::Style::Close
-        ,settings
+        sf::Style::Titlebar | sf::Style::Close,
+        settings
     );
     window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(60);
