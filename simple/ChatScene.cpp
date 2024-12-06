@@ -79,7 +79,7 @@ void ChatScene::handleInput(sf::Uint32 unicode) {
             inputText.setString(currentInput);
         }
     }
-    if (unicode < 127) { // 英文等基本字符
+    if (unicode >= 32 && unicode < 127) { // 英文等基本字符
         currentInput += static_cast<char>(unicode);
         inputText.setString(currentInput);
     }

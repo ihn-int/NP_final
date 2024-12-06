@@ -58,7 +58,7 @@ public:
 
     // Member functions
     // [(de)(con)]structor
-    Scene(sf::String name) : name(name) {};
+    Scene(sf::String name);
     ~Scene() = default;
 
     // Socket connection related
