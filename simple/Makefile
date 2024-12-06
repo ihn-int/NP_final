@@ -3,7 +3,7 @@
 #PIC_DIR = ../pictures
 
 PROG = game
-OBJS = game.o SceneManager.o Scene.o ChatScene.o ErrorHandler.o
+OBJS = game.o SceneManager.o Scene.o StartScene.o ErrorHandler.o
 
 
 

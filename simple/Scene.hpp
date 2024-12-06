@@ -13,10 +13,11 @@
 
 //==========================================================
 // Error handler, static class
-#define RUNNING_NULL_SCENE   1
+#define RUNNING_NULL_SCENE 1
 #define CHANGE_TO_NULL_SCENE 2
 #define DELETE_NULL_GAMEOBJECT 3
 #define FONT_NOT_FOUND 4
+#define IMAGE_NOT_FOUND 5
 
 #ifndef __ErrorHandler
 #define __ErrorHandler

@@ -15,6 +15,9 @@ void ErrorHandler::printError(uint32_t error_code) {
     case FONT_NOT_FOUND:
         std::fprintf(stderr, "Error! Required font not found.\n");
         break;
+    case IMAGE_NOT_FOUND:
+        std::fprintf(stderr, "Error! Required image not found.\n");
+        break;
     default:
         std::fprintf(stderr, "Error! Undefined error code: %d.\n", error_code);
     }

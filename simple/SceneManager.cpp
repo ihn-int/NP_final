@@ -34,6 +34,8 @@ void SceneManager::addScene(Scene* scene) {
 }
 
 void SceneManager::changeScene(sf::String name) {
+    std::printf("INFO: Jump to %s scene.\n",
+        name.toAnsiString().c_str());
     for (auto scene : scenes) {
         if (scene->getName() == name) {
             current_scene = scene;
