@@ -6,6 +6,7 @@
 
 // stadard C++ library
 #include <string>
+#include <cstring>
 #include <cstdio>
 #include <cstddef>
 #include <deque>
@@ -18,6 +19,7 @@
 #define DELETE_NULL_GAMEOBJECT 3
 #define FONT_NOT_FOUND 4
 #define IMAGE_NOT_FOUND 5
+#define INVALID_USAGE 6
 
 #ifndef __ErrorHandler
 #define __ErrorHandler
@@ -52,9 +54,14 @@ class Scene {
 private:
     sf::Clock clock;
     float delta_time = 0.0;
-    char recvbuff[SOCK_SIZE], sendbuff[SOCK_SIZE];
-    sf::String data;
     sf::String name;
+
+    // Socket related
+    uint8_t buff_info;
+    char recvbuff[SOCK_SIZE], sendbuff[SOCK_SIZE];
+        // We use a 8 bit integer to record the status of
+        //  the buffer.
+
 public:
 
     // Member functions

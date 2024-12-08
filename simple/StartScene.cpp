@@ -5,7 +5,8 @@
 //
 StartScene::StartScene(sf::String name) :
     Scene(name), font(), select_result(0),
-    cover_texture(), select_text(),
+    cover_texture(), dies_texture(), chess_texture(),
+    select_text(), dies(), chess(),
     selector(sf::CircleShape(15, 3))
     {
         init();
@@ -19,10 +20,25 @@ void StartScene::init() {
     cover.setTexture(cover_texture);
     cover.setPosition(sf::Vector2f(100, 50));
     
+    // Set dies and chess decorations
+    /**/
+    if (!dies_texture.loadFromFile("dies.png")) {
+        ErrorHandler::printError(IMAGE_NOT_FOUND);
+    }
+    dies.setTexture(dies_texture);
+    dies.setPosition(sf::Vector2f(700, 0));
+    if (!chess_texture.loadFromFile("chess.png")) {
+        ErrorHandler::printError(IMAGE_NOT_FOUND);
+    }
+    chess.setTexture(chess_texture);
+    chess.setPosition(sf::Vector2f(-80, 90));
+    /**/
+
     // Set font and selection text
     if (!font.loadFromFile("WenQuanYiZenHeiMono-02.ttf")) {
         ErrorHandler::printError(FONT_NOT_FOUND);
     }
+
     select_text.setFont(font);
     select_text.setFillColor(sf::Color::Black);
     select_text.setCharacterSize(40);
@@ -53,6 +69,8 @@ void StartScene::blit(sf::RenderWindow* window) {
     window->clear(sf::Color::White);
 
     // Draw cover image
+    window->draw(chess);
+    window->draw(dies);
     window->draw(cover);
     window->draw(select_text);
     window->draw(selector);

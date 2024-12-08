@@ -12,4 +12,12 @@ void Scene::setDeltaTime() {
     clock.restart();
 }
 
-// Other functions should be override
+void Scene::setRecvbuff(char* sm_buff) {
+    // SceneManager writes data into recvbuff
+    std::strcpy(recvbuff, sm_buff);
+}
+
+void Scene::getSendbuff(char* sm_buff) {
+    // SceneManager reads data from sendbuff
+    std::strcpy(sm_buff, sendbuff);
+}
