@@ -1,0 +1,66 @@
+Start and Lobby
+cli->serv
+login                   0   [username]
+select game             1   {B, F}
+exit (ctrl + C)         999
+
+
+Black jack (Waiting)
+cli->serv
+ready                   2
+quit                    -1
+chat                    100 [content]
+exit (ctrl + C)         999
+serv->cli
+player name             3 {0, 1, 2, 3} [name]       // second number refer to position, 0 is BOT
+player state            4 {y, n}                    // y: ready  n: not
+player quit             5 {1, 2, 3}                 // must push the player
+legalcmd                102 {r, q, n}               // r: ready  q: quit  n: nop
+chat                    101 [content]
+timezone                550 w
+timer                   555 [last time]
+timeout (quit)          -2  {0, 1, 2, 3}            // 0: self timeout
+
+
+Black jack (Gaming)
+cli->serv
+bet                     6 [point]
+ask                     7
+stop                    8
+chat                    100 [content]
+exit (ctrl + C)         999
+serv->cli
+betpt                   10  {1, 2, 3}       [point]
+getcard                 11  {0, 1, 2, 3}    {0, 1 - 52}
+winpt                   12  {1, 2, 3}       [point]
+chat                    101 [content]                       // might be warning of illegal cmd, content start with [INFO]
+legal cmd               102 {b, a, s, n}                    // b: bet  a: ask  s: stop  n: nop
+timezone                550 {b, a, o}                       // b: bet  a: ask  o: open
+timer                   555 [last time]
+timeout (bet)           -3                                  // only send to self, other player will get {10 X 0}
+timeout (ask)           -4                                  // only send to self, other player will get nothing
+
+
+Connect four (Waiting)
+cli->serv
+ready                   2
+serv->cli
+timezone                550 w
+timer                   555 [last time]
+timeout (quit)          -2  {0, 1}              // 0: self, 1: other
+
+
+Connect four (Gaming)
+cli->serv
+down                    13  {1 - 7}             // might be illegal
+bet                     6   [point]
+surrend                 14
+chat                    100 [content]
+exit (ctrl + C)         999
+serv->cli
+down                    15  {0, 1}  [r][c]      // 0: self, 1: other
+chat                    101 [content]
+legalcmd                102 {b, d, s, n}
+timezone                550 {y, c, }
+timer                   555 [last time]
+timeout (surrend)       -2  {0, 1}              // 0: self, 1: other
