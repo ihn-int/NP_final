@@ -20,6 +20,9 @@ std::string Scene::update() {
         gameObject->update(delta_time);
     }
     std::string next_scene = "";
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+        next_scene = "Chat";
+    }
     // next_scene = canva.update();
     return next_scene;
 }

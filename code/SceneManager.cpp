@@ -17,7 +17,7 @@ SceneManager::SceneManager(
             sf::Style::Titlebar | sf::Style::Close
     ))
     {
-        window.setVerticalSyncEnabled(true);
+        window.setVerticalSyncEnabled(false);
         window.setFramerateLimit(60);
         glEnable(GL_TEXTURE_2D);
     }
