@@ -13,8 +13,8 @@ chat                    100 [content]
 exit (ctrl + C)         999
 serv->cli
 player name             3 {0, 1, 2, 3} [name]       // second number refer to position, 0 is BOT
-player state            4 {y, n}                    // y: ready  n: not
-player quit             5 {1, 2, 3}                 // must push the player
+player ready            4 {0, 1, 2, 3} 
+player quit             5 {1, 2, 3}                 // don't need to push the player
 legalcmd                102 {r, q, n}               // r: ready  q: quit  n: nop
 chat                    101 [content]
 timezone                550 w
