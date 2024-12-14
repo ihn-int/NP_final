@@ -2,6 +2,7 @@ include ../Make.defines
 
 #PIC_DIR = ../pictures
 
+
 PROG = game
 OBJS = game.o SceneManager.o Scene.o GameObject.o ErrorHandler.o
 # OBJS = test.o
@@ -13,8 +14,13 @@ all: $(OBJS)
 #		${CC} ${CFLAGS} -o test  test.o ${LIBS}
 
 
-%.o: %.cpp
-	g++ -c $<
+# %.o: %.cpp
+# 	g++ -c $<
+
+test: 
+	gcc $(CFLAGS) -o test.o -c test.cpp
+	gcc $(CFLAGS) -o test test.o $(LIBS)
+
 
 clean:
 	rm $(PROG)

@@ -3,18 +3,17 @@
 
 #define USAGE "usage: ./game <IPaddress> <UserId>"
 
-
-
-int main(int argc, char** argv) {
+int main(int argc, char **argv)
+{
     // Socket related
     // Use a stub system now
-    if (argc < 3) {
+    if (argc < 3)
+    {
         std::printf(USAGE);
         ErrorHandler::printError(INVALID_USAGE);
     }
     std::printf("User %s is connecting to server: %s ...\n",
-        argv[2], argv[1]
-    );
+                argv[2], argv[1]);
 
     // Scene Manager
     SceneManager sceneManager("Test", 800, 600);
@@ -24,8 +23,8 @@ int main(int argc, char** argv) {
     sceneManager.addScene(&startScene);
 
     // BlackJack Scene
-    BJScene bjScene("Blackjack");
-    sceneManager.addScene(%bjScene);
+    // BJScene bjScene("Blackjack");
+    // sceneManager.addScene(%bjScene);
 
     // Set Start Scene
     sceneManager.changeScene("Start");

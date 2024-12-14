@@ -3,7 +3,8 @@
 
 #ifndef _ChatScene
 #define _ChatScene
-class ChatScene : public  Scene {
+class ChatScene : public Scene
+{
 private:
     sf::Font font;
     sf::RectangleShape inputBox;
@@ -19,9 +20,9 @@ public:
     ChatScene(sf::String name);
     ~ChatScene() = default;
     void init() override;
-    sf::String update(sf::RenderWindow* window) override;
-    void blit(sf::RenderWindow* window) override;
-    
+    sf::String update(sf::RenderWindow *window) override;
+    void blit(sf::RenderWindow *window) override;
+
     // class defined functions
     void handleInput(sf::Uint32 unicode);
 };
@@ -29,10 +30,11 @@ public:
 
 //==========================================================
 // Start Scene
-// 
+//
 #ifndef _StartScene
 #define _StartScene
-class StartScene : public  Scene {
+class StartScene : public Scene
+{
 private:
     // Input related
     sf::Font font;
@@ -52,9 +54,9 @@ public:
     StartScene(sf::String name);
     ~StartScene() = default;
     void init() override;
-    sf::String update(sf::RenderWindow* window) override;
-    void blit(sf::RenderWindow* window) override;
-    
+    sf::String update(sf::RenderWindow *window) override;
+    void blit(sf::RenderWindow *window) override;
+
     // class defined functions
     sf::String handleInput();
 };
@@ -62,10 +64,11 @@ public:
 
 //==========================================================
 // Blackjack Scene
-// 
+//
 #ifndef _BJScene
 #define _BJScene
-class BJScene : public  Scene {
+class BJScene : public Scene
+{
 private:
     // Canva related
     sf::Font font;
@@ -79,24 +82,16 @@ private:
     const uint8_t max_lines = 10;
     const uint8_t max_chars = 17;
 
-    std::vector<Player> 
-
 public:
     BJScene(sf::String name);
     ~BJScene() = default;
     void init() override;
-    sf::String update(sf::RenderWindow* window) override;
-    void blit(sf::RenderWindow* window) override;
-    
+    sf::String update(sf::RenderWindow *window) override;
+    void blit(sf::RenderWindow *window) override;
+
     // class defined functions
     void handleInput(sf::Uint32 unicode);
 
     // Player defined function
-
 };
 #endif
-
-// Blackjack Scene objects
-class Player {
-
-}
