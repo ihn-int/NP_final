@@ -63,6 +63,7 @@ public:
 //==========================================================
 // Blackjack Scene
 // 
+/*
 #ifndef _BJScene
 #define _BJScene
 class BJScene : public  Scene {
@@ -100,3 +101,4 @@ public:
 class Player {
 
 }
+*/

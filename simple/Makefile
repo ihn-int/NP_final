@@ -8,11 +8,11 @@ OBJS = game.o SceneManager.o Scene.o StartScene.o ErrorHandler.o
 
 
 all: $(OBJS)
-	g++ $(OBJS) -o game -lsfml-graphics -lsfml-window -lsfml-system -lGL
+	g++ $(OBJS) -o game -lsfml-graphics -lsfml-window -lsfml-system -lGL -L./Connect/libunp.a
 
 %.o: %.cpp
-	g++ -c $<
+	g++ -I./Connect/lib -c $< 
 
 clean:
-	rm $(PROG)
 	rm *.o
+	rm $(PROG)
