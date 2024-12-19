@@ -14,7 +14,7 @@ StartScene::StartScene(sf::String name) :
 
 void StartScene::init() {
     // Set cover picture
-    if (!cover_texture.loadFromFile("gamecover.png")) {
+    if (!cover_texture.loadFromFile("background/gamecover.png")) {
         ErrorHandler::printError(IMAGE_NOT_FOUND);
     }
     cover.setTexture(cover_texture);
@@ -22,12 +22,12 @@ void StartScene::init() {
     
     // Set dies and chess decorations
     /**/
-    if (!dies_texture.loadFromFile("dies.png")) {
+    if (!dies_texture.loadFromFile("background/dies.png")) {
         ErrorHandler::printError(IMAGE_NOT_FOUND);
     }
     dies.setTexture(dies_texture);
     dies.setPosition(sf::Vector2f(700, 0));
-    if (!chess_texture.loadFromFile("chess.png")) {
+    if (!chess_texture.loadFromFile("background/chess.png")) {
         ErrorHandler::printError(IMAGE_NOT_FOUND);
     }
     chess.setTexture(chess_texture);
@@ -53,6 +53,7 @@ void StartScene::init() {
 
 sf::String StartScene::update(sf::RenderWindow* window) {
     setDeltaTime();
+    is_send = false;
     sf::Event event;
     if (window->pollEvent(event)) {
         // Check if window closed
@@ -92,6 +93,15 @@ sf::String StartScene::handleInput() {
         selector.setPosition(300, 465);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+        // Handle socket when pressing the enter key
+        if (select_result == 0) { // send blackjack
+            sprintf(sendline, "1 B\n");
+            is_send = true;
+        }
+        else if (select_result == 1) { // send connect 4
+            sprintf(sendline, "1 F\n");
+            is_send = true;
+        }
         return select_result ? "Connect4" : "Blackjack";
     }
     else {

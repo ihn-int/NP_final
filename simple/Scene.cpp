@@ -17,7 +17,15 @@ void Scene::setRecvbuff(char* sm_buff) {
     std::strcpy(recvbuff, sm_buff);
 }
 
+void Scene::setRecvFlag(bool flag) {
+    is_recv = flag;
+}
+
 void Scene::getSendbuff(char* sm_buff) {
     // SceneManager reads data from sendbuff
     std::strcpy(sm_buff, sendbuff);
+}
+
+bool Scene::getSendFlag() {
+    return is_send;
 }

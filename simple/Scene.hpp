@@ -12,6 +12,9 @@
 #include <deque>
 #include <vector>
 
+// Socket related definition
+#include "unp.h"
+
 //==========================================================
 // Error handler, static class
 #define RUNNING_NULL_SCENE 1
@@ -28,12 +31,6 @@ public:
     static void printError(uint32_t error_code);
 };
 #endif
-
-//==========================================================
-// Socket related ultilities
-//
-#define SOCK_SIZE 4096
-#define INET4_ADDR_SIZE 16
 
 //==========================================================
 // Game Scene
@@ -56,11 +53,13 @@ private:
     float delta_time = 0.0;
     sf::String name;
 
+protected:
     // Socket related
-    uint8_t buff_info;
-    char recvbuff[SOCK_SIZE], sendbuff[SOCK_SIZE];
-        // We use a 8 bit integer to record the status of
-        //  the buffer.
+    char recvline[MAXLINE], sendline[MAXLINE];
+    bool is_send, is_recv;
+        // The bool flags are asserted only if the tasks
+        // should be handled.
+    std::vector<std::string> operations;
 
 public:
 
@@ -71,7 +70,9 @@ public:
 
     // Socket connection related
     void setRecvbuff(char* sm_buff);
-    void getSendbuff(char* sm_buff); 
+    void setRecvFlag(bool flag);
+    void getSendbuff(char* sm_buff);
+    bool getSendFlag();
 
     // Game execution related
     void setDeltaTime();
@@ -81,6 +82,23 @@ public:
     const sf::String getName() const { return name; }
 };
 #endif
+
+//==========================================================
+// User
+// A simple class to record the information of the user.
+// Instantiated by SceneManager.
+#ifndef __User
+#define __User
+class User {
+public:
+    std::string id;
+    int pt;
+public:
+    User(std::string id) : id(id), pt(10000){}
+    ~User() = default;
+};
+#endif
+//==========================================================
 
 //==========================================================
 // Game Scene Manager
@@ -95,19 +113,25 @@ private:
     Scene* current_scene;
 
     // Socket connection related
-    //char
+    int sockfd;
+    int read_num;
+    char recvline[MAXLINE], sendline[MAXLINE];
+    fd_set recv_set;
+    struct timeval timeout;
 
     // SFML game related
     sf::String game_title;
     uint32_t width, height;
     sf::RenderWindow window;
-
+    User user;
 public:
     // [(de)(con)]structor
     SceneManager(
+        std::string user_id,
         sf::String game_title,
         uint32_t width,
-        uint32_t height
+        uint32_t height,
+        int sockfd
     );
     ~SceneManager() = default;
 

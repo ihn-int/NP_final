@@ -24,6 +24,7 @@ int main(int argc, char** argv) {
     struct sockaddr_in servaddr;
 
     // Create Socket
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(14514);
@@ -41,14 +42,14 @@ int main(int argc, char** argv) {
     std::printf("Send user id: %s to server...\n", argv[2]);
     std::string sendline = "0 " + std::string(argv[2]);
     // writen(sockfd, sendline.c_str(), sendline.length());
-    std::printf("Debug: %s\n", sendline.c_str());
-    return 0;
+    std::printf("[SOCK]: send: \n\"%s\"\n", sendline.c_str());
     // end of send user id
     //============================================
 
     //============================================
     // Scene Manager
-    SceneManager sceneManager("Test", 800, 600);
+    SceneManager sceneManager(std::string(argv[2]), "Test",
+        800, 600, sockfd);
 
     // Start Scene
     StartScene startScene("Start");
