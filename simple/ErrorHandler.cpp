@@ -21,6 +21,9 @@ void ErrorHandler::printError(uint32_t error_code) {
     case INVALID_USAGE:
         std::fprintf(stderr, "Error! Wrong arguments.\n");
         break;
+    case UNKNOWN_OPCODE:
+        std::fprintf(stderr, "Error! Unknown instruction from server.\n");
+        break;
     default:
         std::fprintf(stderr, "Error! Undefined error code: %d.\n", error_code);
     }

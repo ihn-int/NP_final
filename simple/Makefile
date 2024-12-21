@@ -1,14 +1,16 @@
 #include ../Make.defines
 
 #PIC_DIR = ../pictures
-
+SERV = server
 PROG = game
-OBJS = game.o SceneManager.o Scene.o StartScene.o ErrorHandler.o
-
+OBJS = game.o SceneManager.o Scene.o StartScene.o BJScene.o ErrorHandler.o
 
 
 all: $(OBJS)
-	g++ $(OBJS) -o game -lsfml-graphics -lsfml-window -lsfml-system -lGL -L./Connect/libunp.a
+	g++ $(OBJS) -o game -lsfml-graphics -lsfml-window -lsfml-system -lGL -L./Connect/ -lunp
+
+server: server.o
+	g++ server.o -o server -L./Connect/ -lunp
 
 %.o: %.cpp
 	g++ -I./Connect/lib -c $< 
@@ -16,3 +18,4 @@ all: $(OBJS)
 clean:
 	rm *.o
 	rm $(PROG)
+	rm server

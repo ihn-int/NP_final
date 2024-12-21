@@ -14,7 +14,7 @@ void Scene::setDeltaTime() {
 
 void Scene::setRecvbuff(char* sm_buff) {
     // SceneManager writes data into recvbuff
-    std::strcpy(recvbuff, sm_buff);
+    std::strcpy(recvline, sm_buff);
 }
 
 void Scene::setRecvFlag(bool flag) {
@@ -23,7 +23,7 @@ void Scene::setRecvFlag(bool flag) {
 
 void Scene::getSendbuff(char* sm_buff) {
     // SceneManager reads data from sendbuff
-    std::strcpy(sm_buff, sendbuff);
+    std::strcpy(sm_buff, sendline);
 }
 
 bool Scene::getSendFlag() {

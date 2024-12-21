@@ -1,13 +1,11 @@
 #include "Scene.hpp"
 
 SceneManager::SceneManager(
-    std::string user_id,
     sf::String game_title,
     uint32_t width,
     uint32_t height,
     int sockfd
-) : user(User(user_id)),
-    game_title(game_title),
+) : game_title(game_title),
     width(width),
     height(height),
     sockfd(sockfd),
@@ -36,15 +34,15 @@ void SceneManager::init() {
 
 void SceneManager::addScene(Scene* scene) {
     scenes.emplace_back(scene);
-    scene->init();
 }
 
 void SceneManager::changeScene(sf::String name) {
-    std::printf("INFO: Jump to %s scene.\n",
+    std::printf("[INFO] Jump to %s scene.\n",
         name.toAnsiString().c_str());
     for (auto scene : scenes) {
         if (scene->getName() == name) {
             current_scene = scene;
+            current_scene->init();
             return;
         }
     }
@@ -52,8 +50,6 @@ void SceneManager::changeScene(sf::String name) {
 }
 
 void SceneManager::runScene() {
-    
-    
     // Check current scene
     if (current_scene == nullptr) {
         ErrorHandler::printError(RUNNING_NULL_SCENE);
@@ -66,15 +62,13 @@ void SceneManager::runScene() {
         timeout.tv_usec = 0;
         FD_ZERO(&recv_set);
         FD_SET(sockfd, &recv_set);
-        select(sockfd+1, &recv_set, NULL, NULL, &timeout);
-        if (FD_ISSET(sockfd, &recv_set)){
+        read_num = select(sockfd+1, &recv_set, NULL, NULL, &timeout);
+        if (read_num > 0 && FD_ISSET(sockfd, &recv_set)){
             // Try to invoke buffer
-            read_num = read(sockfd, recvline, MAXLINE);
-            if (read_num > 0) {
-                std::printf("[SOCK] recieve: %s\n", recvline);
-                current_scene->setRecvbuff(recvline);
-                current_scene->setRecvFlag(true);
-            }
+            readline(sockfd, recvline, MAXLINE);
+            std::printf("[RECV] %s\n", recvline);
+            current_scene->setRecvbuff(recvline);
+            current_scene->setRecvFlag(true);
         }
         else {
             current_scene->setRecvFlag(false);
@@ -86,8 +80,8 @@ void SceneManager::runScene() {
         // Send data if needed
         if (current_scene->getSendFlag()) {
             current_scene->getSendbuff(sendline);
-            // writen(sockfd, sendline, strlen(sendline));
-            std::printf("[SOCK] send: %s\n", sendline);
+            writen(sockfd, sendline, strlen(sendline));
+            std::printf("[SEND] %s\n", sendline);
         }
         
         // Blit the window
@@ -97,10 +91,10 @@ void SceneManager::runScene() {
         if (next_scene != "") {
             if (next_scene == "Exit") {
                 // User quit
-                close(sockfd);
                 sprintf(sendline, "999\n");
-                std::printf("[GAME] quit game.\n");
-                // writen(sockfd, sendline, strlen(sendline));
+                writen(sockfd, sendline, strlen(sendline));
+                std::printf("[SEND] %s\n", sendline);
+                close(sockfd);
                 window.close();
             }
             else {

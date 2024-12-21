@@ -11,9 +11,13 @@
 #include <cstddef>
 #include <deque>
 #include <vector>
+#include <map>
+#include <sstream>
 
 // Socket related definition
-#include "unp.h"
+extern "C" {
+    #include "unp.h"
+}
 
 //==========================================================
 // Error handler, static class
@@ -23,6 +27,7 @@
 #define FONT_NOT_FOUND 4
 #define IMAGE_NOT_FOUND 5
 #define INVALID_USAGE 6
+#define UNKNOWN_OPCODE 7
 
 #ifndef __ErrorHandler
 #define __ErrorHandler
@@ -59,7 +64,6 @@ protected:
     bool is_send, is_recv;
         // The bool flags are asserted only if the tasks
         // should be handled.
-    std::vector<std::string> operations;
 
 public:
 
@@ -80,22 +84,6 @@ public:
     virtual sf::String update(sf::RenderWindow* window) = 0;
     virtual void blit(sf::RenderWindow* window) = 0;
     const sf::String getName() const { return name; }
-};
-#endif
-
-//==========================================================
-// User
-// A simple class to record the information of the user.
-// Instantiated by SceneManager.
-#ifndef __User
-#define __User
-class User {
-public:
-    std::string id;
-    int pt;
-public:
-    User(std::string id) : id(id), pt(10000){}
-    ~User() = default;
 };
 #endif
 //==========================================================
@@ -123,11 +111,9 @@ private:
     sf::String game_title;
     uint32_t width, height;
     sf::RenderWindow window;
-    User user;
 public:
     // [(de)(con)]structor
     SceneManager(
-        std::string user_id,
         sf::String game_title,
         uint32_t width,
         uint32_t height,

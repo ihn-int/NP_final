@@ -53,7 +53,12 @@ void StartScene::init() {
 
 sf::String StartScene::update(sf::RenderWindow* window) {
     setDeltaTime();
+    // Recieve socket data if needed
+    // No data should be recieve in StartScene
+    // De-assert send flag
     is_send = false;
+
+    // Check sfml event
     sf::Event event;
     if (window->pollEvent(event)) {
         // Check if window closed
