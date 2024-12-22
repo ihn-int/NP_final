@@ -118,14 +118,15 @@ sf::String BJScene::update(sf::RenderWindow* window) {
     // Set delta_time;
     setDeltaTime();
 
+    // De-assert send flag and state flag
+    is_send = false;
+    back_to_lobby = false;
+
     // Recieve socket data if needed
     if (is_recv) {  // the recieve flag is asserted
         parseOps(std::string(recvline));
     }
 
-    // De-assert send flag and state flag
-    is_send = false;
-    back_to_lobby = false;
 
     // Check sfml event
     sf::Event event;
@@ -134,11 +135,11 @@ sf::String BJScene::update(sf::RenderWindow* window) {
         if (event.type == sf::Event::Closed) {
             return "Exit";
         }
+        // Check keyboard input
         if (event.type == sf::Event::TextEntered) {
             handleInput(event.text.unicode);
         }
     }
-    // Check keyboard input
     return (back_to_lobby) ? "Start" : "";
 }
 
@@ -247,7 +248,7 @@ void BJScene::parseOps(std::string op) {
         case 3: // player name
             opstream >> index >> token;
             if (token.size() > 8){
-                // Upperbound is 16
+                // Upperbound is 8
                 token = token.substr(0, 8);
             }
             user_ids[index] = token;
@@ -297,6 +298,7 @@ void BJScene::parseOps(std::string op) {
             switch (abbr) {
                 case 'w' :
                     game_state = 0; // 0 for wait
+                    // clear card
                     break;
                 case 'b':
                     game_state = 1; // 1 for bet
@@ -307,17 +309,25 @@ void BJScene::parseOps(std::string op) {
                 case 'o':
                     game_state = 3; // 3 for open
                     break;
-                default: break;
+                default:    // default to wait
+                    game_state = 0;
+                    break;
             }
             break;
         case 555: // last time
             opstream >> last_time;
             break;
-        case (-2): // someone time out
+        case -2: // someone time out
             opstream >> index;
-            user_ids[index] = "";
-            user_readys[index] = false;
-            break;
+            if (index == 0) { // self time out, return to lobby
+                back_to_lobby = true;
+                break;
+            }
+            else {
+                user_ids[index] = "";
+                user_readys[index] = false;
+                break;
+            }
         case 10:   // player bets points
             opstream >> index >> number;
             user_pts[index] = number;
@@ -404,6 +414,7 @@ void BJScene::parseSendOps(std::string send_op) {
                 break;
             case 3: // nop
                 is_send = false;
+                break;
                 // send nothing
             case 4: // ready
                 sprintf(sendline, "2\n");

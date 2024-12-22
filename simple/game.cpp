@@ -54,6 +54,10 @@ int main(int argc, char** argv) {
     BJScene bjScene("Blackjack");
     sceneManager.addScene(&bjScene);
 
+    // Connect 4 Scene
+    C4Scene c4scene("Connect4");
+    sceneManager.addScene(&c4scene);
+    
     // Set Start Scene
     sceneManager.changeScene("Start");
 

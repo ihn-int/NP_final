@@ -154,11 +154,67 @@ public:
     void handleInput(sf::Uint32 unicode);
 
     // Player defined function
-    void setUpBoard();
-    void cleanBoard();
     void parseOps(std::string op);
     void handleMessage(std::string chatinfo);
     void parseSendOps(std::string send_op);
 };
 #endif
 
+#ifndef __C4Scene
+#define __C4Scene
+
+class C4Scene : public Scene {
+private:
+    //============================================
+    // Canva related
+    sf::Font font;
+
+    sf::RectangleShape input_box;
+    sf::Text input_text;
+    
+    sf::RectangleShape message_box;
+    sf::Text message_text;
+    std::deque<std::string> messages;
+    
+    std::string current_input;
+
+    const uint8_t max_lines = 10;
+    const uint8_t max_chars = 17;
+
+    // Game state
+    int game_state; // an extra state -1 for matching
+    sf::Text game_state_text;
+    int last_time;
+    sf::Text last_time_text;
+    
+
+    // end of canva related
+    //============================================
+
+    //============================================
+    // player related
+    // chess board
+    sf::RectangleShape board;
+    std::vector<std::vector<int>> chessboard;
+    std::vector<std::vector<sf::CircleShape>> chess_circles;
+
+    std::vector<std::string> commands;
+    std::vector<sf::Text> command_texts;
+
+    std::vector<std::string> op_from_servs;
+    bool back_to_lobby;
+
+public:
+    C4Scene(sf::String name);
+    ~C4Scene() = default;
+    void init() override;
+    sf::String update(sf::RenderWindow* window) override;
+    void blit(sf::RenderWindow* window) override;
+
+    void handleInput(sf::Uint32 unicode);
+    void parseOps(std::string op);
+    void handleMessage(std::string chatinfo);
+    void parseSendOps(std::string send_op);
+};
+
+#endif

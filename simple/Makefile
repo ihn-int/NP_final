@@ -3,7 +3,7 @@
 #PIC_DIR = ../pictures
 SERV = server
 PROG = game
-OBJS = game.o SceneManager.o Scene.o StartScene.o BJScene.o ErrorHandler.o
+OBJS = game.o SceneManager.o Scene.o StartScene.o BJScene.o C4Scene.o ErrorHandler.o
 
 
 all: $(OBJS)
