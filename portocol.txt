@@ -49,7 +49,7 @@ quit                    -1
 serv->cli
 player in + clear card  3 {0, 1} [name]
 player ready            4 {0, 1}
-legalcmd                102 [RDS]               // 01 string, [ready, down, surrend]
+legalcmd                102 [RQDS]              // 01 string, [ready, quit, down, surrend]
 timezone                550 {M, W}              // M: matching, W: waiting
 timer                   555 [last time]
 timeout (quit)          -2  {0, 1}              // 0: self, 1: other
@@ -67,7 +67,7 @@ player name             3   {0, 1}  [name]      // + chat mathcing info
 winpt                   // change to chat info
 down                    15  {0, 1}  [r][c]      // 0: self, 1: other
 chat                    101 [content]
-legalcmd                102 [RDS]               // 01 string, [ready, down, surrend]
+legalcmd                102 [RQDS]              // 01 string, [ready, quit, down, surrend]
 timezone                550 {Y, C, F}           // Y: my round, C: competitor's round, F: finish
 timer                   555 [last time]
 timeout (surrend)       // change to chat info
