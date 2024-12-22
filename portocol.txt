@@ -15,9 +15,10 @@ serv->cli
 player name             3 {0, 1, 2, 3} [name]       // second number refer to position, 0 is BOT
 player ready            4 {0, 1, 2, 3} 
 player quit             5 {1, 2, 3}                 // don't need to push the player
-legalcmd                102 {r, q, n}               // r: ready  q: quit  n: nop
+player current point    17  [point]
+legalcmd                102 [RQBAS]                 // 01 string, [ready, quit, bet, ask, stop]
 chat                    101 [content]
-timezone                550 w
+timezone                550 W                       // waiting and clear all cards, set bet to 0
 timer                   555 [last time]
 timeout (quit)          -2  {0, 1, 2, 3}            // 0: self timeout
 
@@ -31,21 +32,25 @@ chat                    100 [content]
 exit (ctrl + C)         999
 serv->cli
 betpt                   10  {1, 2, 3}       [point]
-getcard                 11  {0, 1, 2, 3}    {0, 1 - 52}
-winpt                   12  {1, 2, 3}       [point]
+getcard                 11  {0, 1, 2, 3}    {0 - 52}
+showcard                16  {0, 1, 2, 3}    {1 - 52}
+player current point    17  [point]
+winpt                   //  change to chat info
 chat                    101 [content]                       // might be warning of illegal cmd, content start with [INFO]
-legal cmd               102 {b, a, s, n}                    // b: bet  a: ask  s: stop  n: nop
-timezone                550 {b, a, o}                       // b: bet  a: ask  o: open
+legalcmd                102 [RQBAS]                         // 01 string, [ready, quit, bet, ask, stop]
+timezone                550 {B, A, O}                       // B: bet  A: ask  O: open
 timer                   555 [last time]
-timeout (bet)           -3                                  // only send to self, other player will get {10 X 0}
-timeout (ask)           -4                                  // only send to self, other player will get nothing
 
 
-Connect four (Waiting)
+Connect four (Matching / Waiting)
 cli->serv
 ready                   2
+quit                    -1
 serv->cli
-timezone                550 w
+player in + clear card  3 {0, 1} [name]
+player ready            4 {0, 1}
+legalcmd                102 [RDS]               // 01 string, [ready, down, surrend]
+timezone                550 {M, W}              // M: matching, W: waiting
 timer                   555 [last time]
 timeout (quit)          -2  {0, 1}              // 0: self, 1: other
 
@@ -58,9 +63,11 @@ surrend                 14
 chat                    100 [content]
 exit (ctrl + C)         999
 serv->cli
+player name             3   {0, 1}  [name]      // + chat mathcing info
+winpt                   // change to chat info
 down                    15  {0, 1}  [r][c]      // 0: self, 1: other
 chat                    101 [content]
-legalcmd                102 {b, d, s, n}
-timezone                550 {y, c, }
+legalcmd                102 [RDS]               // 01 string, [ready, down, surrend]
+timezone                550 {Y, C, F}           // Y: my round, C: competitor's round, F: finish
 timer                   555 [last time]
-timeout (surrend)       -2  {0, 1}              // 0: self, 1: other
+timeout (surrend)       // change to chat info
