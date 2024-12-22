@@ -49,6 +49,7 @@ void StartScene::init() {
     selector.setRotation(90);
     selector.setPosition(300, 410);
     selector.setFillColor(sf::Color::Black);
+
 }
 
 sf::String StartScene::update(sf::RenderWindow* window) {
@@ -60,6 +61,7 @@ sf::String StartScene::update(sf::RenderWindow* window) {
 
     // Check sfml event
     sf::Event event;
+
     if (window->pollEvent(event)) {
         // Check if window closed
         if (event.type == sf::Event::Closed) {
@@ -99,6 +101,7 @@ sf::String StartScene::handleInput() {
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
         // Handle socket when pressing the enter key
+
         if (select_result == 0) { // send blackjack
             sprintf(sendline, "1 B\n");
             is_send = true;

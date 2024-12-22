@@ -72,6 +72,16 @@ void C4Scene::init() {
     last_time_text.setFillColor(sf::Color::Black);
     last_time_text.setPosition(615, 50);
 
+    player_a = "";
+    player_a_ready = false;
+    player_b = "";
+    player_b_ready = false;
+    player_avsb = sf::Text();
+    player_avsb.setFont(font);
+    player_avsb.setCharacterSize(30);
+    player_avsb.setFillColor(sf::Color::Black);
+    player_avsb.setPosition(615, 90);
+
     // Set commands place and size
     commands = std::vector<std::string>(8, "");
     command_texts = std::vector<sf::Text>(8, sf::Text());
@@ -151,10 +161,13 @@ void C4Scene::blit(sf::RenderWindow* window) {
             game_state_text.setString("Waiting");
             break;
         case 1:  // y state
-            game_state_text.setString("Y");
+            game_state_text.setString("Self");
             break;
         case 2:  // c state
-            game_state_text.setString("C");
+            game_state_text.setString("Opposite");
+            break;
+        case 3:  // finish state
+            game_state_text.setString("Finish");
             break;
         default: 
             game_state_text.setString("Unknown");
@@ -166,6 +179,13 @@ void C4Scene::blit(sf::RenderWindow* window) {
     last_time_text.setString("Last: " + std::to_string(last_time));
     window->draw(last_time_text);
 
+    // Blit player a vs. player b
+    std::string tmp_a = (player_a_ready) ? "(R)" : "   ";
+    std::string tmp_b = (player_b_ready) ? "(R)" : "   ";
+    tmp_a += (player_a.size() > 8) ? player_a.substr(0, 8) : player_a;
+    tmp_b += (player_b.size() > 8) ? player_b.substr(0, 8) : player_b;
+    player_avsb.setString(tmp_a + "\n   vs.\n" + tmp_b);
+    window->draw(player_avsb);
     // Blit legal commands
     for (int i = 0; i < 8; i++) {
         if (commands[i] != "") {
@@ -205,10 +225,28 @@ void C4Scene::parseOps(std::string op) {
     std::string chatinfo = "";
     opstream >> opcode;
     switch (opcode) {
+        case 3:  // players' name
+            opstream >> index;
+            if (index == 0) { // player a name
+                opstream >> player_a;
+            }
+            else {  // player b name
+                opstream >> player_b;
+            }
+            break;
+        case 4:  // player ready
+            opstream >> index;
+            if (index == 0) { // player a ready
+                player_a_ready = true;
+            }
+            else {  // player b ready
+                player_b_ready = true;
+            }
+            break;
         case 15: // down
             opstream >> index >> token;
             r = token[0] - '0';
-            c = token[1] - '1';
+            c = token[1] - '0';
             chessboard[r][c] = index;
             break;
         case 101: // chat
@@ -219,39 +257,34 @@ void C4Scene::parseOps(std::string op) {
             handleMessage(chatinfo);
             break;
         case 102: // legal command
-            opstream >> abbr;
-            switch(abbr) {
-                case 'b': // bet
-                    commands[0] = "0 bet";
-                    break;
-                case 'd': // down
-                    commands[1] = "1 down";
-                    break;
-                case 's': // surrend
-                    commands[2] = "2 surrend";
-                    break;
-                case 'n': // nop
-                    commands[3] = "3 nop";
-                    break;
-                case 'r': // ready
-                    commands[4] = "4 ready";
-                    break;
-                default: break;
-            }
+            opstream >> token;
+            commands[4] = (token[0] == '1') ? "4 ready" : "";
+            commands[5] = (token[1] == '1') ? "5 quit" : "";
+            commands[0] = (token[2] == '1') ? "0 down" : "";
+            commands[1] = (token[3] == '1') ? "1 surrend" : "";
             break;
         case 550: // game state
             opstream >> abbr;
             switch (abbr) {
-                case 'w': // waiting state
+                case 'W': // waiting state
                     game_state = 0;
+                    // clean up chess board
+                    for (int i = 0; i < 6; i++) {
+                        for (int j = 0; j < 7; j++) {
+                            chessboard[i][j] = -1;
+                        }
+                    }
                     break;
-                case 'y': // self
+                case 'Y': // self
                     game_state = 1;
                     break;
-                case 'c': // opposite
+                case 'C': // opposite
                     game_state = 2;
                     break;
-                case 'm': // match
+                case 'F': // finish
+                    game_state = 3;
+                    break;
+                case 'M': // match
                     game_state = -1;
                     break;
                 default:  // default to match
@@ -322,24 +355,26 @@ void C4Scene::parseSendOps(std::string send_op) {
 
         ops >> opcode;
         switch(opcode) {
-            case 0: // bet
-                ops >> number;
-                sprintf(sendline, "6 %i\n", number);
-                break;
-            case 1: // down
+            case 0: // down
                 ops >> number;
                 sprintf(sendline, "13 %i\n", number);
                 break;
-            case 2: // surrend
+            case 1: // surrend
                 sprintf(sendline, "14\n");
-                break;
-            case 3: // nop
-                is_send = false;
                 break;
             case 4: // ready
                 sprintf(sendline, "2\n");
                 break;
-            default: break;
+            case 5: // quit
+                back_to_lobby = true;
+                sprintf(sendline, "-1\n");
+                break;
+            default:
+                is_send = false;
+                break;
         }
+    }
+    else{   // chat message
+        sprintf(sendline, "10 %s\n", send_op.c_str());
     }
 }

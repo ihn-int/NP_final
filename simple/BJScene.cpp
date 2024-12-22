@@ -76,7 +76,6 @@ void BJScene::init() {
             user_card_sprites[i][j].setPosition(170 + 80 * j, y);
         }
     }
-
     // Set time zone place and size
     game_state = 0;
     game_state_text = sf::Text();
@@ -92,6 +91,14 @@ void BJScene::init() {
     last_time_text.setCharacterSize(30);
     last_time_text.setFillColor(sf::Color::Black);
     last_time_text.setPosition(615, 50);
+
+    // Set player's current point place and size
+    current_point = 0;
+    current_point_text = sf::Text();
+    current_point_text.setFont(font);
+    current_point_text.setCharacterSize(30);
+    current_point_text.setFillColor(sf::Color::Black);
+    current_point_text.setPosition(615, 90);
 
     // Set commands place and size
     commands = std::vector<std::string>(8, "");
@@ -208,6 +215,10 @@ void BJScene::blit(sf::RenderWindow* window) {
     last_time_text.setString("Last: " + std::to_string(last_time));
     window->draw(last_time_text);
 
+    // Blit player current point
+    current_point_text.setString("Pts: " + std::to_string(current_point));
+    window->draw(current_point_text);
+
     // Blit legal commands
     for (int i = 0; i < 8; i++) {
         if (commands[i] != "") {
@@ -262,29 +273,17 @@ void BJScene::parseOps(std::string op) {
             user_ids[index] = "";
             user_readys[index] = false;
             break;
+        case 17: // player's current points
+            opstream >> current_point;
+            break;
         case 102: // legal command
-            opstream >> abbr;
-            switch(abbr) {
-                case 'r':
-                    commands[4] = "4 ready";
-                    break;
-                case 'q':
-                    commands[5] = "5 quit";
-                    break;
-                case 'n':
-                    commands[3] = "3 nop";
-                    break;
-                case 'b':
-                    commands[0] = "0 bet";
-                    break;
-                case 'a':
-                    commands[1] = "1 ask";
-                    break;
-                case 's':
-                    commands[2] = "2 stop";
-                    break;
-                default: break;
-            }
+            opstream >> token;
+            // check ready
+            commands[4] = (token[0] == '1') ? "4 ready" : "";
+            commands[5] = (token[1] == '1') ? "5 quit" : "";
+            commands[0] = (token[2] == '1') ? "0 bet" : "";
+            commands[1] = (token[3] == '1') ? "1 ask" : "";
+            commands[2] = (token[4] == '1') ? "2 stop" : "";
             break;
         case 101: // chat
             while(opstream >> token){
@@ -296,17 +295,23 @@ void BJScene::parseOps(std::string op) {
         case 550: // waiting zone
             opstream >> abbr;
             switch (abbr) {
-                case 'w' :
+                case 'W' :
                     game_state = 0; // 0 for wait
                     // clear card
+                    for (int i = 0; i < 4; i++) {
+                        for (int j = 0; j < 5; j++) {
+                            user_cards[i][j] = "";
+                        }
+                        user_pts[i] = 0;
+                    }
                     break;
-                case 'b':
+                case 'B':
                     game_state = 1; // 1 for bet
                     break;
-                case 'a':
+                case 'A':
                     game_state = 2; // 2 for ask
                     break;
-                case 'o':
+                case 'O':
                     game_state = 3; // 3 for open
                     break;
                 default:    // default to wait
@@ -343,9 +348,9 @@ void BJScene::parseOps(std::string op) {
                 }
             }
             break;
-        case 12:   // player wins points
+        case 16:   // open first card of user
             opstream >> index >> number;
-            user_pts[index] = number;
+            user_cards[index][0] = card_files[number];
             break;
         default:
             std::printf("[INFO] Unknown instruction.\n");

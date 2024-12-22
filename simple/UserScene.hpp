@@ -114,6 +114,8 @@ private:
     // players' points
     std::vector<int> user_pts;
     std::vector<sf::Text> user_pt_texts;
+    int current_point;
+    sf::Text current_point_text;
 
     // players' cards
     std::vector<std::vector<std::string>> user_cards;
@@ -152,11 +154,10 @@ public:
     
     // class defined functions
     void handleInput(sf::Uint32 unicode);
-
-    // Player defined function
-    void parseOps(std::string op);
     void handleMessage(std::string chatinfo);
+    void parseOps(std::string op);
     void parseSendOps(std::string send_op);
+    void cleanCard();
 };
 #endif
 
@@ -187,6 +188,7 @@ private:
     int last_time;
     sf::Text last_time_text;
     
+    
 
     // end of canva related
     //============================================
@@ -197,6 +199,12 @@ private:
     sf::RectangleShape board;
     std::vector<std::vector<int>> chessboard;
     std::vector<std::vector<sf::CircleShape>> chess_circles;
+
+    std::string player_a;
+    bool player_a_ready;
+    std::string player_b;
+    bool player_b_ready;
+    sf::Text player_avsb;
 
     std::vector<std::string> commands;
     std::vector<sf::Text> command_texts;
