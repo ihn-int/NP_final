@@ -46,6 +46,7 @@ Connect four (Matching / Waiting)
 cli->serv
 ready                   2
 quit                    -1
+chat                    100 [content]
 exit                    999
 serv->cli
 player info             3 {0, 1} [name]
@@ -59,16 +60,15 @@ timeout (quit)          -2  {0, 1}              // 0: self, 1: other, will send 
 Connect four (Gaming)
 cli->serv
 down                    13  {1 - 7}             // might be illegal
-bet                     6   [point]
 surrend                 14
 chat                    100 [content]
 exit (ctrl + C)         999
 serv->cli
-player name             3   {0, 1}  [name]      // + chat mathcing info
 winpt                   // change to chat info
-down                    15  {0, 1}  [r][c]      // 0: self, 1: other
+down                    15  {0, 1}  [r][c]      // 0: self, 1: other, row from top to bottom, column from left to right, both 1 indexed
+player current point    17  [point]
 chat                    101 [content]
 legalcmd                102 [RQDS]              // 01 string, [ready, quit, down, surrend]
-timezone                550 {Y, C, F}           // Y: my round, C: competitor's round, F: finish
+timezone                550 {Y, C, F}           // Y: my round, C: competitor's round, F: finish, with chat info
 timer                   555 [last time]
 timeout (surrend)       // change to chat info
