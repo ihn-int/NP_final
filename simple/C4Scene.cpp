@@ -268,12 +268,7 @@ void C4Scene::parseOps(std::string op) {
             switch (abbr) {
                 case 'W': // waiting state
                     game_state = 0;
-                    // clean up chess board
-                    for (int i = 0; i < 6; i++) {
-                        for (int j = 0; j < 7; j++) {
-                            chessboard[i][j] = -1;
-                        }
-                    }
+                    
                     break;
                 case 'Y': // self
                     game_state = 1;
@@ -285,10 +280,26 @@ void C4Scene::parseOps(std::string op) {
                     game_state = 3;
                     break;
                 case 'M': // match
-                    game_state = -1;
+                    game_state = -1;// clean up chess board
+                    for (int i = 0; i < 6; i++) {
+                        for (int j = 0; j < 7; j++) {
+                            chessboard[i][j] = -1;
+                        }
+                    }
+                    player_a = "";
+                    player_b = "";
+                    last_time = 0;
                     break;
                 default:  // default to match
-                    game_state = -1;
+                    game_state = -1;// clean up chess board
+                    for (int i = 0; i < 6; i++) {
+                        for (int j = 0; j < 7; j++) {
+                            chessboard[i][j] = -1;
+                        }
+                    }
+                    player_a = "";
+                    player_b = "";
+                    last_time = 0;
                     break;
             }
             break;

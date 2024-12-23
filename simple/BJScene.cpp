@@ -316,6 +316,13 @@ void BJScene::parseOps(std::string op) {
                     break;
                 default:    // default to wait
                     game_state = 0;
+                    // clear card
+                    for (int i = 0; i < 4; i++) {
+                        for (int j = 0; j < 5; j++) {
+                            user_cards[i][j] = "";
+                        }
+                        user_pts[i] = 0;
+                    }
                     break;
             }
             break;

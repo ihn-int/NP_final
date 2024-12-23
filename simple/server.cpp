@@ -6,7 +6,7 @@ extern "C" {
 #include <cstring>
 #include <string>
 
-void runConnect(int sockfd) {
+int runConnect(int sockfd) {
     std::string msg;
     char sendline[MAXLINE], recvline[MAXLINE];
     int maxfdp1 = std::max(fileno(stdin), sockfd) + 1;
@@ -21,8 +21,7 @@ void runConnect(int sockfd) {
         if (select(maxfdp1, &rset, NULL, NULL, &timeout)) {
             if (FD_ISSET(sockfd, &rset)) {
                 int n = readline(sockfd, recvline, MAXLINE);
-                if (n == 0) return;
-                if (std::strncmp(recvline, "999", 3) == 0) return;
+                if (n == 0) return 0;
                 std::printf("[RECV] %s\n", recvline);
             }
             if (FD_ISSET(fileno(stdin), &rset)) {
@@ -49,14 +48,12 @@ int main() {
 
     bind(listenfd, (SA*) &servaddr, sizeof(servaddr));
     listen(listenfd, LISTENQ);
-
     for (;;) {
         if ((connfd = accept(listenfd, (SA*)&cliaddr, &clilen)) < 0){
             if (errno == EINTR) continue;
             else std::cout << "Error" << std::endl;
-            
         }
         std::cout << "[SERV] get user " << connfd << std::endl;
-        runConnect(connfd);
+        return runConnect(connfd);
     }
 }
