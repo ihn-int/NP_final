@@ -11,11 +11,11 @@ class RoomManager
 public:
     int current_user, maxfdp1;
     int game_state;
+    int timePoint;
     bool update;
-    fd_set allset;
-    pthread_mutex_t mutex;
+    fd_set allset, rset;
+    pthread_mutex_t *mutex;
     Timer timer;
-    void join(User *);
 };
 
 class Lobby_Manager : public RoomManager
@@ -26,8 +26,15 @@ public:
     void updateListen();
     void join(User *);
     void leave(User *);
+    int msg_wait();
+    void msg_handle(int &);
+    void CF_handle();
     vector<User *> users;
+    vector<void *> CF_room;
+    queue<User *> CF_queue;
 };
+
+void *lobby_run(void *);
 
 class BJ_RoomManager : public RoomManager
 {
@@ -58,29 +65,23 @@ public:
 class CF_RoomManager : public RoomManager
 {
 public:
-    CF_RoomManager(Lobby_Manager *lobby)
-    {
-        for (int i = 0; i <= 1; i++)
-        {
-            players[i] = nullptr;
-        }
-        current_round = 0;
-        this->lobby = lobby;
-    }
-    ~CF_RoomManager()
-    {
-        for (int i = 0; i <= 1; i++)
-        {
-            User *u = players[i]->original_user;
-            u->pt = players[i]->pt;
-            u->state = 1;
-            lobby->update = 1;
-            delete players[i];
-        }
-    }
+    CF_RoomManager(Lobby_Manager *);
+    ~CF_RoomManager();
     CF_Player *players[2];
-    int current_round;
+    int current_round, ready_player;
+    int board[7][6];
+    bool die;
     Lobby_Manager *lobby;
+    void updateMember();
+    void join(User *);
+    void leave(int, bool);
+    void broadcast(string, int);
+    void send(string, int);
+    bool msg_wait();
+    void msg_handle();
+    void timeout();
 };
+
+void *CF_run(void *);
 
 #endif

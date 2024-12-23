@@ -1,6 +1,7 @@
 #ifndef __TIMER__
 #define __TIMER__
 #include <chrono>
+#include <iostream>
 
 using namespace std::chrono;
 
@@ -11,40 +12,60 @@ public:
     {
         running = false;
     }
-    bool begin()
+    bool start()
     {
         if (running)
         {
             return false;
         }
-        start = system_clock::now();
+        beg = system_clock::now();
+        timeStamp = 0;
+        running = true;
         return true;
     }
-    long long get()
+    bool get_end(int check)
+    {
+        if (running && timeStamp >= check)
+        {
+            stop();
+            return true;
+        }
+        return false;
+    }
+    long long get_second()
     {
         if (!running)
         {
-            return -1;
+            return -2;
         }
         system_clock::time_point current = system_clock::now();
-        return duration_cast<milliseconds>(start - current).count();
+        long long l = duration_cast<milliseconds>(current - beg).count() / 1000;
+        if (l > timeStamp)
+        {
+            timeStamp++;
+            return timeStamp;
+        }
+        return -1;
     }
-    bool close(bool restart = 0)
+    bool stop(bool restart = 0)
     {
         if (!running)
         {
             return false;
         }
+        running = false;
         if (restart)
         {
-            start = system_clock::now();
+            running = true;
+            beg = system_clock::now();
         }
         return true;
     }
 
 private:
-    system_clock::time_point start;
+    system_clock::time_point beg;
     bool running;
+    long long timeStamp;
 };
 
 #endif

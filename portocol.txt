@@ -46,13 +46,14 @@ Connect four (Matching / Waiting)
 cli->serv
 ready                   2
 quit                    -1
+exit                    999
 serv->cli
-player in + clear card  3 {0, 1} [name]
+player info             3 {0, 1} [name]
 player ready            4 {0, 1}
 legalcmd                102 [RQDS]              // 01 string, [ready, quit, down, surrend]
-timezone                550 {M, W}              // M: matching, W: waiting
-timer                   555 [last time]
-timeout (quit)          -2  {0, 1}              // 0: self, 1: other
+timezone                550 {M, W}              // M: matching + clear all information, W: waiting
+timer                   555 [last time]         // -1 means no time limit
+timeout (quit)          -2  {0, 1}              // 0: self, 1: other, will send another chat info to remain player
 
 
 Connect four (Gaming)
