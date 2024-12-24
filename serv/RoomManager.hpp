@@ -3,6 +3,7 @@
 #include "mylib.hpp"
 #include "User.hpp"
 #include "Timer.hpp"
+#include "StringBuff.hpp"
 
 using namespace std;
 
@@ -11,11 +12,12 @@ class RoomManager
 public:
     int current_user, maxfdp1;
     int game_state;
-    int timePoint;
+    int joinNum;
     bool update;
     fd_set allset, rset;
     pthread_mutex_t *mutex;
     Timer timer;
+    StringBuff *fdBuff;
 };
 
 class Lobby_Manager : public RoomManager
@@ -67,10 +69,11 @@ class CF_RoomManager : public RoomManager
 public:
     CF_RoomManager(Lobby_Manager *);
     ~CF_RoomManager();
+    queue<CF_Player *> joinQueue;
     CF_Player *players[2];
     int current_round, ready_player;
-    int board[7][6];
-    bool die;
+    int board[8][7];
+    bool die, fin, nextRound, surr, updateListen;
     Lobby_Manager *lobby;
     void updateMember();
     void join(User *);
@@ -79,7 +82,9 @@ public:
     void send(string, int);
     bool msg_wait();
     void msg_handle();
+    void time_handle();
     void timeout();
+    bool checkWin(int, int);
 };
 
 void *CF_run(void *);

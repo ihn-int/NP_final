@@ -6,6 +6,7 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
+    srand(time(NULL));
     int listenfd, connfd;
     struct sockaddr_in servaddr;
     socklen_t servlen = sizeof(servaddr);

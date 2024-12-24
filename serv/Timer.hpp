@@ -47,19 +47,19 @@ public:
         }
         return -1;
     }
-    bool stop(bool restart = 0)
+    bool stop()
     {
         if (!running)
         {
             return false;
         }
         running = false;
-        if (restart)
-        {
-            running = true;
-            beg = system_clock::now();
-        }
         return true;
+    }
+    void restart()
+    {
+        stop();
+        start();
     }
 
 private:

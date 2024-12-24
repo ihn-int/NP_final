@@ -4,6 +4,8 @@
         "algorithm": "cpp",
         "io_context": "cpp",
         "iostream": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "executor": "cpp",
+        "mutex": "cpp"
     }
 }

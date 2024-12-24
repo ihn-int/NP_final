@@ -51,10 +51,12 @@ exit                    999
 serv->cli
 player info             3 {0, 1} [name]
 player ready            4 {0, 1}
+player current point    17  [point]
+chat                    101 [content]
 legalcmd                102 [RQDS]              // 01 string, [ready, quit, down, surrend]
 timezone                550 {M, W}              // M: matching + clear all information, W: waiting
 timer                   555 [last time]         // -1 means no time limit
-timeout (quit)          -2  {0, 1}              // 0: self, 1: other, will send another chat info to remain player
+timeout (quit)          -2  {0, 1}              // 0: self, 1: other, will send another chat info to remain player (1: unuse)
 
 
 Connect four (Gaming)
@@ -67,6 +69,7 @@ serv->cli
 winpt                   // change to chat info
 down                    15  {0, 1}  [r][c]      // 0: self, 1: other, row from top to bottom, column from left to right, both 1 indexed
 player current point    17  [point]
+win or lose             18  {W, L}              // W: win, L: lose
 chat                    101 [content]
 legalcmd                102 [RQDS]              // 01 string, [ready, quit, down, surrend]
 timezone                550 {Y, C, F}           // Y: my round, C: competitor's round, F: finish, with chat info
