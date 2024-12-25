@@ -6,6 +6,9 @@
         "iostream": "cpp",
         "initializer_list": "cpp",
         "executor": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "*.tcc": "cpp",
+        "string": "cpp",
+        "istream": "cpp"
     }
 }

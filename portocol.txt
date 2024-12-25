@@ -31,16 +31,16 @@ stop                    8
 chat                    100 [content]
 exit (ctrl + C)         999
 serv->cli
-player name             3   {0, 1, 2, 3}    [name]       // second number refer to position, 0 is BOT
+player name             3   {0, 1, 2, 3}    [name]      // second number refer to position, 0 is BOT
 betpt                   10  {0, 1, 2, 3}    [point]
 getcard                 11  {0, 1, 2, 3}    {0 - 4}    {0 - 52}     // 0: unknown, 1-13: S, 14-26: H, ...
 showcard                // combine with getcard
 player current point    17  [point]
-winpt                   //  change to chat info
 chat                    101 [content]                       // might be warning of illegal cmd, content start with [INFO]
 legalcmd                102 [RQBAS]                         // 01 string, [ready, quit, bet, ask, stop]
 timezone                550 {B, A, O}                       // B: bet  A: ask  O: open
 timer                   555 [last time]
+quit                    -2  {0, 1, 2, 3}                // 0: self + clear all card
 
 
 Connect four (Matching / Waiting)

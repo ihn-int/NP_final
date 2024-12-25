@@ -30,8 +30,11 @@ public:
     void leave(User *);
     int msg_wait();
     void msg_handle(int &);
+    void BJ_handle();
     void CF_handle();
     vector<User *> users;
+    vector<void *> BJ_room;
+    queue<User *> BJ_queue;
     vector<void *> CF_room;
     queue<User *> CF_queue;
 };
@@ -41,36 +44,39 @@ void *lobby_run(void *);
 class BJ_RoomManager : public RoomManager
 {
 public:
-    BJ_RoomManager(Lobby_Manager *lobby)
-    {
-        for (int i = 0; i <= 3; i++)
-        {
-            players[i] = nullptr;
-        }
-        this->lobby = lobby;
-    }
-    ~BJ_RoomManager()
-    {
-        for (int i = 1; i <= current_user; i++)
-        {
-            User *u = players[i]->original_user;
-            u->pt = players[i]->pt;
-            u->state = 1;
-            lobby->update = 1;
-            delete players[i];
-        }
-    }
-    BJ_Player *players[4];
+    BJ_RoomManager(Lobby_Manager *);
+    ~BJ_RoomManager();
+    queue<Player *> joinQueue;
+    vector<int> cards;
+    Player *players[4];
+    int current_round, ready_player, hand[4][5], bet[4];
+    bool die, newround, updateListen;
     Lobby_Manager *lobby;
+    void updateMember();
+    void join(User *);
+    void leave(int, bool);
+    void broadcast(string, int);
+    void send(string, int);
+    void setcard();
+    void sethand();
+    int getcard();
+    void msg_wait();
+    void msg_handle();
+    void time_handle();
+    void timeout();
+    void open();
+    int point_compute(int n);
 };
+
+void *BJ_run(void *);
 
 class CF_RoomManager : public RoomManager
 {
 public:
     CF_RoomManager(Lobby_Manager *);
     ~CF_RoomManager();
-    queue<CF_Player *> joinQueue;
-    CF_Player *players[2];
+    queue<Player *> joinQueue;
+    Player *players[2];
     int current_round, ready_player;
     int board[8][7];
     bool die, fin, nextRound, surr, updateListen;
@@ -80,7 +86,7 @@ public:
     void leave(int, bool);
     void broadcast(string, int);
     void send(string, int);
-    bool msg_wait();
+    void msg_wait();
     void msg_handle();
     void time_handle();
     void timeout();

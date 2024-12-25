@@ -20,18 +20,21 @@ User::~User()
     }
 }
 
-CF_Player::CF_Player(User *u)
+void Player::update_point()
+{
+    original_user->pt = this->pt;
+}
+
+Player::Player(User *u)
 {
     fd = u->fd;
     pt = u->pt;
     state = 0;
     original_user = u;
-    bet = 0;
     name = u->name;
-    first = false;
 }
 
-CF_Player::~CF_Player()
+Player::~Player()
 {
     fd = -1;
     original_user = nullptr;

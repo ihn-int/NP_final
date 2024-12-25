@@ -18,20 +18,12 @@ public:
     ~User();
 };
 
-class BJ_Player : public User
+class Player : public User
 {
 public:
-    int card[5];
-    int bet;
-};
-
-class CF_Player : public User
-{
-public:
-    int bet;
-    bool first;
-    CF_Player(User *);
-    ~CF_Player();
+    Player(User *);
+    ~Player();
+    void update_point();
 };
 
 #endif
