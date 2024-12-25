@@ -672,6 +672,10 @@ void BJ_RoomManager::updateMember()
             {
                 broadcast("3 0 Senpai\n10 0 114514\n4 0\n");
                 broadcast("11 0 0 0\n", 0);
+                if (game_state == 4)
+                {
+                    broadcast("11 0 0 " + to_string(hand[0][0]) + "\n");
+                }
                 for (int i = 1; i <= 4; i++)
                 {
                     if (hand[0][i] == -1)
@@ -688,6 +692,7 @@ void BJ_RoomManager::updateMember()
                     }
                     broadcast("3 " + to_string(p) + " " + players[p]->name + "\n");
                     broadcast("10 " + to_string(p) + " " + to_string(bet[p]) + "\n");
+                    send("17 " + to_string(players[p]->pt) + "\n", p);
                     if (players[p]->state == 5)
                     {
                         send("102 01000\n", p);
@@ -715,6 +720,10 @@ void BJ_RoomManager::updateMember()
                             break;
                         }
                         broadcast("11 " + to_string(p) + " " + to_string(i) + " " + to_string(hand[p][i]) + "\n");
+                    }
+                    if (game_state == 4)
+                    {
+                        broadcast("11 " + to_string(p) + " 0 " + to_string(hand[p][0]) + "\n");
                     }
                 }
             }
