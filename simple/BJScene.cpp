@@ -428,7 +428,7 @@ void BJScene::parseSendOps(std::string send_op) {
                 break;
             case 5: // quit
                 // assert back to lobby here
-                back_to_lobby = true;
+                // back_to_lobby = true;
                 sprintf(sendline, "-1\n");
                 break;
             default: // unknown op, send nothing

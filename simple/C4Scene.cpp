@@ -400,7 +400,7 @@ void C4Scene::parseSendOps(std::string send_op) {
                 sprintf(sendline, "2\n");
                 break;
             case 5: // quit
-                back_to_lobby = true;
+                // back_to_lobby = true;
                 sprintf(sendline, "-1\n");
                 break;
             default:
