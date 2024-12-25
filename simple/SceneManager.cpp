@@ -9,7 +9,8 @@ SceneManager::SceneManager(
     width(width),
     height(height),
     sockfd(sockfd),
-    read_num(0)
+    read_num(0),
+    str_buff()
     {
         init();
     }
@@ -55,6 +56,7 @@ void SceneManager::runScene() {
         ErrorHandler::printError(RUNNING_NULL_SCENE);
     }
 
+    int n;
     // Check if wondow open
     while (window.isOpen()) {
         // Check socket
@@ -63,14 +65,28 @@ void SceneManager::runScene() {
         FD_ZERO(&recv_set);
         FD_SET(sockfd, &recv_set);
         read_num = select(sockfd+1, &recv_set, NULL, NULL, &timeout);
+
+        // Try to invoke buffer by StringBuff
         if (read_num > 0 && FD_ISSET(sockfd, &recv_set)){
-            // Try to invoke buffer
-            readline(sockfd, recvline, MAXLINE);
-            std::printf("[RECV] %s\n", recvline);
-            current_scene->setRecvbuff(recvline);
+            n = read(sockfd, recvline, MAXLINE);
+            // std::printf("[RECV] %s\n", recvline);
+            if (n == 0) break;
+            recvline[n] = '\0';
+            str_buff.write(sockfd, recvline);
+            //current_scene->setRecvbuff(recvline);
+            //current_scene->setRecvFlag(true);
+        }
+
+        // Check the data in StringBuff
+        std::string cmd;
+        if ((cmd = str_buff.read(sockfd)) != "") {
+            // There's some string in buffer
+            std::printf("[RECV] %s\n", cmd.c_str());
+            current_scene->setRecvbuff(cmd.c_str());
             current_scene->setRecvFlag(true);
         }
         else {
+            // Nothing to read
             current_scene->setRecvFlag(false);
         }
 

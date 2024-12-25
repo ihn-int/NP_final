@@ -72,6 +72,15 @@ void C4Scene::init() {
     last_time_text.setFillColor(sf::Color::Black);
     last_time_text.setPosition(615, 50);
 
+    // Set player's current point place and size
+    current_point = 0;
+    current_point_text = sf::Text();
+    current_point_text.setFont(font);
+    current_point_text.setCharacterSize(30);
+    current_point_text.setFillColor(sf::Color::Black);
+    current_point_text.setPosition(615, 90);
+
+    // Set player info
     player_a = "";
     player_a_ready = false;
     player_b = "";
@@ -80,7 +89,7 @@ void C4Scene::init() {
     player_avsb.setFont(font);
     player_avsb.setCharacterSize(30);
     player_avsb.setFillColor(sf::Color::Black);
-    player_avsb.setPosition(615, 90);
+    player_avsb.setPosition(615, 130);
 
     // Set commands place and size
     commands = std::vector<std::string>(8, "");
@@ -179,6 +188,10 @@ void C4Scene::blit(sf::RenderWindow* window) {
     last_time_text.setString("Last: " + std::to_string(last_time));
     window->draw(last_time_text);
 
+    // Blit player current point
+    current_point_text.setString("Pts: " + std::to_string(current_point));
+    window->draw(current_point_text);
+
     // Blit player a vs. player b
     std::string tmp_a = (player_a_ready) ? "(R)" : "   ";
     std::string tmp_b = (player_b_ready) ? "(R)" : "   ";
@@ -242,6 +255,9 @@ void C4Scene::parseOps(std::string op) {
             else {  // player b ready
                 player_b_ready = true;
             }
+            break;
+        case 17: // player's current point
+            opstream >> current_point;
             break;
         case 15: // down
             opstream >> index >> token;
@@ -313,7 +329,7 @@ void C4Scene::parseOps(std::string op) {
             }
             break;
         default:
-            std::printf("[INFO] Unknown instruction.\n");
+            std::printf("[INFO] Unknown instruction: %s\n", op.c_str());
     }
 }
 

@@ -11,8 +11,14 @@
 #include <cstddef>
 #include <deque>
 #include <vector>
-#include <map>
 #include <sstream>
+#include <map>
+#include <cstdlib>
+#include <ctime>
+#include <iostream>
+#include <queue>
+#include <chrono>
+#include <algorithm>
 
 // Socket related definition
 extern "C" {
@@ -73,7 +79,7 @@ public:
     ~Scene() = default;
 
     // Socket connection related
-    void setRecvbuff(char* sm_buff);
+    void setRecvbuff(const char* sm_buff);
     void setRecvFlag(bool flag);
     void getSendbuff(char* sm_buff);
     bool getSendFlag();
@@ -87,7 +93,19 @@ public:
 };
 #endif
 //==========================================================
+#ifndef __StringBuff
+#define __StringBuff
 
+class StringBuff
+{
+public:
+    std::map<int, std::string> buff;
+    void write(int, const char *);
+    std::string read(int);
+    void clear(int);
+};
+
+#endif
 //==========================================================
 // Game Scene Manager
 // Managing all the Scene, also running the game
@@ -95,6 +113,9 @@ public:
 //  initialize itself but not the constructor
 #ifndef __SceneManager
 #define __SceneManager
+
+
+
 class SceneManager {
 private:
     std::vector<Scene*> scenes;
@@ -104,6 +125,7 @@ private:
     int sockfd;
     int read_num;
     char recvline[MAXLINE], sendline[MAXLINE];
+    StringBuff str_buff;
     fd_set recv_set;
     struct timeval timeout;
 

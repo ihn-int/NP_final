@@ -351,7 +351,7 @@ void BJScene::parseOps(std::string op) {
             user_cards[index][number] = card_files[number2];
             break;
         default:
-            std::printf("[INFO] Unknown instruction.\n");
+            std::printf("[INFO] Unknown instruction: %s.\n", op.c_str());
             //ErrorHandler::printError(UNKNOWN_OPCODE); 
     }
 }

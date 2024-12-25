@@ -188,7 +188,8 @@ private:
     int last_time;
     sf::Text last_time_text;
     
-    
+    int current_point;
+    sf::Text current_point_text;
 
     // end of canva related
     //============================================

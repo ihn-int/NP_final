@@ -12,7 +12,7 @@ void Scene::setDeltaTime() {
     clock.restart();
 }
 
-void Scene::setRecvbuff(char* sm_buff) {
+void Scene::setRecvbuff(const char* sm_buff) {
     // SceneManager writes data into recvbuff
     std::strcpy(recvline, sm_buff);
 }
