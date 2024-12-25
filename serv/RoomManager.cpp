@@ -480,7 +480,7 @@ void BJ_RoomManager::open()
         }
     }
 
-    broadcast("101 [INFO] New round will be start in 15 seconds.\n");
+    broadcast("101 [INFO] New round will start in 15 seconds.\n");
 }
 void BJ_RoomManager::join(User *u)
 {
@@ -589,7 +589,7 @@ void BJ_RoomManager::updateMember()
 
             if (current_user == 1 || ready_player == 0)
             {
-                broadcast("102 11000\n550 W\n555 -1\n101 [INFO] Player change. Ready to start the game.\n");
+                broadcast("102 11000\n550 W\n555 -1\n101 [INFO] Stage change. Ready to start.\n");
                 timer.stop();
                 game_state = 0;
                 ready_player = 0;
@@ -618,11 +618,11 @@ void BJ_RoomManager::updateMember()
                     send("17 " + to_string(players[i]->pt) + "\n", i);
                     if (players[i]->state == 0)
                     {
-                        send("102 11000\n550 W\n555 15\n101 [INFO] Player change. Please ready in 15 seconds.\n", i);
+                        send("102 11000\n550 W\n555 15\n101 [INFO] Stage change. Please ready in 15 seconds.\n", i);
                     }
                     else if (current_user != ready_player)
                     {
-                        send("555 15\n101 [INFO] Player change. Please wait for other players.\n", i);
+                        send("555 15\n101 [INFO] Stage change. Please wait.\n", i);
                         broadcast("4 " + to_string(i) + "\n");
                     }
                 }
@@ -736,7 +736,7 @@ void BJ_RoomManager::updateMember()
             if (cnt == ready_player)
             {
                 broadcast("550 A\n555 60\n");
-                broadcast("102 00011\n101 [INFO] State change.\n", -2);
+                broadcast("102 00011\n101 [INFO] Stage change.\n", -2);
                 timer.restart();
                 game_state = 3;
             }
@@ -758,7 +758,7 @@ void BJ_RoomManager::updateMember()
             if (cnt == ready_player)
             {
                 broadcast("550 O\n555 15\n");
-                broadcast("102 01000\n101 [INFO] State change.\n", -2);
+                broadcast("102 01000\n101 [INFO] Stage change.\n", -2);
                 open();
                 timer.restart();
                 game_state = 4;
@@ -774,7 +774,7 @@ void BJ_RoomManager::updateMember()
             game_state = 0;
             if (cards.size() <= 52)
             {
-                broadcast("101 [INFO] card refersh.\n");
+                broadcast("101 [INFO] Card refersh.\n");
                 setcard();
             }
             sethand();
@@ -856,7 +856,7 @@ void BJ_RoomManager::msg_handle()
             // read fail
             if (ss.fail() || ss.eof())
             {
-                send("101 [INFO] illegal command\n", i);
+                send("101 [INFO] Illegal command\n", i);
                 continue;
             }
             if (players[i]->state == 5)
@@ -877,7 +877,7 @@ void BJ_RoomManager::msg_handle()
                 }
                 else
                 {
-                    send("101 [INFO] illegal command\n", i);
+                    send("101 [INFO] Illegal command\n", i);
                 }
                 continue;
             }
@@ -908,7 +908,7 @@ void BJ_RoomManager::msg_handle()
                 }
                 else
                 {
-                    send("101 [INFO] illegal command\n", i);
+                    send("101 [INFO] Illegal command\n", i);
                 }
                 break;
 
@@ -937,7 +937,7 @@ void BJ_RoomManager::msg_handle()
                 }
                 else
                 {
-                    send("101 [INFO] illegal command\n", i);
+                    send("101 [INFO] Illegal command\n", i);
                 }
                 break;
 
@@ -958,13 +958,13 @@ void BJ_RoomManager::msg_handle()
                     ss >> bpt;
                     if (ss.fail() || ss.eof() || bpt < 0 || bpt > players[i]->pt)
                     {
-                        send("101 [INFO] illegal bet.\n", i);
+                        send("101 [INFO] Illegal bet.\n", i);
                     }
                     else
                     {
                         bet[i] = bpt;
                         players[i]->pt -= bpt;
-                        send("17 " + to_string(players[i]->pt) + "\n102 00000\n101 [INFO] success.\n", i);
+                        send("17 " + to_string(players[i]->pt) + "\n102 00000\n101 [INFO] Success. Please wait.\n", i);
                         broadcast("10 " + to_string(i) + " " + to_string(bpt) + "\n");
                         players[i]->state = 3;
                         update = true;
@@ -972,7 +972,7 @@ void BJ_RoomManager::msg_handle()
                 }
                 else
                 {
-                    send("101 [INFO] illegal command.\n", i);
+                    send("101 [INFO] Illegal command.\n", i);
                 }
                 break;
 
@@ -1012,12 +1012,12 @@ void BJ_RoomManager::msg_handle()
                 else if (op == 8 && players[i]->state == 3)
                 {
                     players[i]->state = 4;
-                    send("102 00000\n101 [INFO] Success. Please wait for other players.\n", i);
+                    send("102 00000\n101 [INFO] Success. Please wait.\n", i);
                     update = true;
                 }
                 else
                 {
-                    send("101 [INFO] illegal command.\n", i);
+                    send("101 [INFO] Illegal command.\n", i);
                 }
                 break;
 
@@ -1038,7 +1038,7 @@ void BJ_RoomManager::msg_handle()
                 }
                 else
                 {
-                    send("101 [INFO] illegal command.\n", i);
+                    send("101 [INFO] Illegal command.\n", i);
                 }
 
             default:
@@ -1106,7 +1106,7 @@ void BJ_RoomManager::timeout()
             {
                 continue;
             }
-            send("101 [INFO] Timeout! auto bet.\n", i);
+            send("101 [INFO] Timeout! Auto bet 0 point.\n", i);
             players[i]->state = 3;
         }
         update = true;
@@ -1119,7 +1119,7 @@ void BJ_RoomManager::timeout()
             {
                 continue;
             }
-            send("101 [INFO] Timeout! auto stand.\n", i);
+            send("101 [INFO] Timeout! Auto stand.\n", i);
             players[i]->state = 4;
         }
         update = true;
@@ -1345,7 +1345,7 @@ void CF_RoomManager::updateMember()
         {
             current_round = rand() % 2;
             send("550 Y\n555 20\n102 0011\n101 [INFO] Your turn.\n", current_round);
-            send("550 C\n555 20\n102 0001\n", 1 - current_round);
+            send("550 C\n555 20\n102 0000\n", 1 - current_round);
             timer.restart();
             game_state = 2;
         }
@@ -1371,11 +1371,11 @@ void CF_RoomManager::updateMember()
                     tmp = 1;
                 }
                 players[tmp]->state = 0;
-                send("102 0100\n550 M\n555 -1\n101 [INFO] Player change, go to matching state.\n3 " + to_string(tmp) + " " + players[tmp]->name + "\n17 " + to_string(players[tmp]->pt) + "\n", tmp);
+                send("102 0100\n550 M\n555 -1\n101 [INFO] Stage change.\n3 " + to_string(tmp) + " " + players[tmp]->name + "\n17 " + to_string(players[tmp]->pt) + "\n", tmp);
                 break;
 
             case 2:
-                broadcast("102 1000\n550 W\n555 15\n101 [INFO] Two players join, please ready in 15 secs.\n");
+                broadcast("102 1000\n550 W\n555 15\n101 [INFO] Please ready in 15 seconds.\n");
                 broadcast("3 0 " + players[0]->name + "\n" + "3 1 " + players[1]->name + "\n");
                 send("17 " + to_string(players[0]->pt) + "\n", 0);
                 send("17 " + to_string(players[1]->pt) + "\n", 1);
@@ -1404,7 +1404,7 @@ void CF_RoomManager::updateMember()
                 }
                 players[w]->pt += 1000;
                 send("18 W\n17 " + to_string(players[w]->pt) + "\n550 F\n555 5\n102 0100\n", w);
-                send("101 [INFO] A player quit this game. You win! +1000 pt\n101 [INFO] The game is finish, you will return to the lobby in 5 secs. Bye~~\n", w);
+                send("101 [INFO] Competitor quit. You win! +1000 pt\n101 [INFO] The game is finish, you will return to the lobby in 10 seconds.\n", w);
                 timer.restart();
                 game_state = 3;
                 break;
@@ -1417,23 +1417,23 @@ void CF_RoomManager::updateMember()
         {
             if (fin)
             {
-                broadcast("101 [INFO] " + players[current_round]->name + " CONNECT FOUR!!!\n102 0100\n");
+                broadcast("102 0100\n");
                 players[current_round]->pt += 1000;
                 send("18 W\n17 " + to_string(players[current_round]->pt) + "\n550 F\n555 5\n", current_round);
-                send("101 [INFO] You win! +1000 pt\n101 [INFO] The game is finish, you will return to the lobby in 10 secs. Bye~~\n", current_round);
+                send("101 [INFO] You win! +1000 pt\n101 [INFO] The game is finish, you will return to the lobby in 10 seconds.\n", current_round);
                 send("18 L\n550 F\n555 5\n", 1 - current_round);
-                send("101 [INFO] You Lose...\n101 [INFO] The game is finish, you will return to the lobby in 10 secs. Bye~~\n", 1 - current_round);
+                send("101 [INFO] You Lose...\n101 [INFO] The game is finish, you will return to the lobby in 10 seconds.\n", 1 - current_round);
                 timer.restart();
                 game_state = 3;
             }
             else if (surr)
             {
-                broadcast("101 [INFO] " + players[current_round]->name + " surrend...\n102 0100\n");
+                broadcast("101 [INFO] " + players[current_round]->name + " surrend.\n102 0100\n");
                 players[1 - current_round]->pt += 1000;
                 send("18 W\n17 " + to_string(players[1 - current_round]->pt) + "\n550 F\n555 5\n", 1 - current_round);
-                send("101 [INFO] You win! +1000 pt\n101 [INFO] The game is finish, you will return to the lobby in 10 secs. Bye~~\n", 1 - current_round);
+                send("101 [INFO] You win! +1000 pt\n101 [INFO] The game is finish, you will return to the lobby in in 10 seconds.\n", 1 - current_round);
                 send("18 L\n550 F\n555 5\n", current_round);
-                send("101 [INFO] You Lose...\n101 [INFO] The game is finish, you will return to the lobby in 10 secs. Bye~~\n", current_round);
+                send("101 [INFO] You Lose...\n101 [INFO] The game is finish, you will return to the lobby in in 10 seconds.\n", current_round);
                 timer.restart();
                 game_state = 3;
             }
@@ -1518,7 +1518,7 @@ void CF_RoomManager::msg_handle()
             // read fail
             if (ss.fail() || ss.eof())
             {
-                send("101 [INFO] illegal command\n", i);
+                send("101 [INFO] Illegal command\n", i);
                 continue;
             }
             switch (game_state)
@@ -1540,7 +1540,7 @@ void CF_RoomManager::msg_handle()
                 }
                 else
                 {
-                    send("101 [INFO] illegal command\n", i);
+                    send("101 [INFO] Illegal command\n", i);
                 }
                 break;
 
@@ -1565,7 +1565,7 @@ void CF_RoomManager::msg_handle()
                 }
                 else
                 {
-                    send("101 [INFO] illegal command\n", i);
+                    send("101 [INFO] Illegal command\n", i);
                 }
                 break;
 
@@ -1613,7 +1613,7 @@ void CF_RoomManager::msg_handle()
                     }
                     if (row == -1)
                     {
-                        send("101 [INFO] illegal column. Please try again.\n", i);
+                        send("101 [INFO] Illegal column. Try again.\n", i);
                     }
                 }
                 else if (op == 14 && current_round == i)
@@ -1623,7 +1623,7 @@ void CF_RoomManager::msg_handle()
                 }
                 else
                 {
-                    send("101 [INFO] illegal command.\n", i);
+                    send("101 [INFO] Illegal command.\n", i);
                 }
                 break;
 
@@ -1644,7 +1644,7 @@ void CF_RoomManager::msg_handle()
                 }
                 else
                 {
-                    send("101 [INFO] illegal command.\n", i);
+                    send("101 [INFO] Illegal command.\n", i);
                 }
 
             default:
@@ -1665,7 +1665,7 @@ void CF_RoomManager::time_handle()
         break;
 
     case 2:
-        TO = 20;
+        TO = 25;
         break;
 
     case 3:
@@ -1702,7 +1702,7 @@ void CF_RoomManager::timeout()
         break;
 
     case 2:
-        send("101 [INFO] Timeout! auto surrend.\n", current_round);
+        send("101 [INFO] Timeout! Auto surrend.\n", current_round);
         surr = true;
         update = true;
         break;
