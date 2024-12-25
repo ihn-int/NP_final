@@ -283,8 +283,8 @@ void BJScene::parseOps(std::string op) {
             commands[4] = (token[0] == '1') ? "4 ready" : "";
             commands[5] = (token[1] == '1') ? "5 quit" : "";
             commands[0] = (token[2] == '1') ? "0 bet" : "";
-            commands[1] = (token[3] == '1') ? "1 ask" : "";
-            commands[2] = (token[4] == '1') ? "2 stop" : "";
+            commands[1] = (token[3] == '1') ? "1 hiy" : "";
+            commands[2] = (token[4] == '1') ? "2 stand" : "";
             break;
         case 101: // chat
             while(opstream >> token){
