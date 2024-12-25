@@ -56,7 +56,7 @@ public:
     void blit(sf::RenderWindow* window) override;
     
     // class defined functions
-    sf::String handleInput();
+    sf::String handleInput(sf::Keyboard::Key code);
 };
 #endif
 

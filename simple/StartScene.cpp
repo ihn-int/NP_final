@@ -39,6 +39,8 @@ void StartScene::init() {
         ErrorHandler::printError(FONT_NOT_FOUND);
     }
 
+    select_result = 0;
+
     select_text.setFont(font);
     select_text.setFillColor(sf::Color::Black);
     select_text.setCharacterSize(40);
@@ -61,16 +63,19 @@ sf::String StartScene::update(sf::RenderWindow* window) {
 
     // Check sfml event
     sf::Event event;
+    sf::String next_scene = "";
 
     if (window->pollEvent(event)) {
         // Check if window closed
         if (event.type == sf::Event::Closed) {
-            return "Exit";
+            //return "Exit";
+            next_scene = "Exit";
         }
+        else if (event.type == sf::Event::KeyPressed) {
+            next_scene = handleInput(event.key.code);
+        }
+
     }
-    // Check keyboard input
-    sf::String next_scene;
-    next_scene = handleInput();
     return next_scene;
 }
 void StartScene::blit(sf::RenderWindow* window) {
@@ -86,20 +91,19 @@ void StartScene::blit(sf::RenderWindow* window) {
     window->display();
 }
 
-sf::String StartScene::handleInput() {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) &&
-        select_result == 1) {
+sf::String StartScene::handleInput(sf::Keyboard::Key code) {
+    if (code == sf::Keyboard::Up && select_result == 1) {
         // Move Up
         select_result = 0;
         selector.setPosition(300, 410);
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) &&
-        select_result == 0) {
+    if (code == sf::Keyboard::Down && select_result == 0) {
         // Move Down
         select_result = 1;
         selector.setPosition(300, 465);
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+    //if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+    if (code == sf::Keyboard::Enter) {
         // Handle socket when pressing the enter key
 
         if (select_result == 0) { // send blackjack

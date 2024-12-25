@@ -25,6 +25,9 @@ void C4Scene::init() {
     input_text.setCharacterSize(20);
     input_text.setPosition(615, 555);
 
+    // Clear history message
+    messages.clear();
+
     // Set message box place and size
     message_box = sf::RectangleShape();
     message_box.setSize(sf::Vector2f(180, 260));
@@ -402,6 +405,6 @@ void C4Scene::parseSendOps(std::string send_op) {
         }
     }
     else{   // chat message
-        sprintf(sendline, "10 %s\n", send_op.c_str());
+        sprintf(sendline, "100 %s\n", send_op.c_str());
     }
 }

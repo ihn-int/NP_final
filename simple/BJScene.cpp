@@ -23,6 +23,9 @@ void BJScene::init() {
     input_text.setCharacterSize(20);
     input_text.setPosition(615, 555);
 
+    // Clear history message
+    messages.clear();
+
     // Set message box place and size
     message_box.setSize(sf::Vector2f(180, 260));
     message_box.setPosition(610, 280);
@@ -283,7 +286,7 @@ void BJScene::parseOps(std::string op) {
             commands[4] = (token[0] == '1') ? "4 ready" : "";
             commands[5] = (token[1] == '1') ? "5 quit" : "";
             commands[0] = (token[2] == '1') ? "0 bet" : "";
-            commands[1] = (token[3] == '1') ? "1 hiy" : "";
+            commands[1] = (token[3] == '1') ? "1 hit" : "";
             commands[2] = (token[4] == '1') ? "2 stand" : "";
             break;
         case 101: // chat
