@@ -308,6 +308,8 @@ void C4Scene::parseOps(std::string op) {
                     player_a = "";
                     player_b = "";
                     last_time = 0;
+                    player_a_ready = false;
+                    player_b_ready = false;
                     break;
                 default:  // default to match
                     game_state = -1;// clean up chess board
@@ -319,6 +321,8 @@ void C4Scene::parseOps(std::string op) {
                     player_a = "";
                     player_b = "";
                     last_time = 0;
+                    player_a_ready = false;
+                    player_b_ready = false;
                     break;
             }
             break;

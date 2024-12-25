@@ -307,6 +307,7 @@ void BJScene::parseOps(std::string op) {
                             user_cards[i][j] = "";
                         }
                         user_pts[i] = 0;
+                        user_readys[i] = false;
                     }
                     break;
                 case 'B':
