@@ -336,7 +336,6 @@ void BJ_RoomManager::sethand()
 {
     for (int i = 0; i <= 3; i++)
     {
-        players[i] = nullptr;
         bet[i] = 0;
         for (int j = 0; j < 5; j++)
         {
@@ -344,11 +343,21 @@ void BJ_RoomManager::sethand()
         }
     }
 }
-int BJ_RoomManager::getcard()
+void BJ_RoomManager::getcard(int n, int m)
 {
     int rt = *cards.rbegin();
     cards.pop_back();
-    return rt;
+    hand[n][m] = rt;
+    if (m == 0)
+    {
+        broadcast("11 " + to_string(n) + " 0 0\n", n);
+        send("11 " + to_string(n) + " 0 " + to_string(hand[n][0]) + "\n", n);
+    }
+    else
+    {
+        broadcast("11 " + to_string(n) + " " + to_string(m) + " " + to_string(hand[n][m]) + "\n");
+    }
+    return;
 }
 int BJ_RoomManager::point_compute(int n)
 {
@@ -391,13 +400,21 @@ int BJ_RoomManager::point_compute(int n)
 }
 void BJ_RoomManager::open()
 {
-    for (int i = 0; i <= 3; i++)
+    int k = 1, pc = point_compute(0);
+    while (pc <= 16 && pc >= 0)
+    {
+        getcard(0, k + 1);
+        k++;
+        pc = point_compute(0);
+    }
+    broadcast("11 0 0 " + to_string(hand[0][0]) + "\n");
+    for (int i = 1; i <= 3; i++)
     {
         if (players[i] == nullptr || players[i]->state == 5)
         {
             continue;
         }
-        broadcast("16 " + to_string(i) + " " + to_string(hand[i][0]) + "\n", i);
+        broadcast("11 " + to_string(i) + " 0 " + to_string(hand[i][0]) + "\n", i);
     }
     int result[4], gain[4] = {0, 0, 0, 0};
     bool winhost[4] = {0, 0, 0, 0};
@@ -407,7 +424,7 @@ void BJ_RoomManager::open()
         result[i] = point_compute(i);
         if (result[i] > result[0])
         {
-            gain[i] += 2 * bet[i];
+            gain[i] += (2 * bet[i] + 100);
             winhost[i] = true;
         }
         else if (result[i] == result[0])
@@ -453,17 +470,17 @@ void BJ_RoomManager::open()
         }
         if (gain[i] == 0)
         {
-            send("101 [INFO] You don't win any point in this game...\n", i);
+            send("101 [INFO] You don't win any point...\n", i);
         }
         else
         {
             players[i]->pt += gain[i];
-            send("101 [INFO] You win " + to_string(gain[i]) + " point in this game!\n", i);
+            send("101 [INFO] You win " + to_string(gain[i]) + " point!\n", i);
             send("17 " + to_string(players[i]->pt) + "\n", i);
         }
     }
 
-    broadcast("101 [INFO] New round will be start in 10 seconds.\n");
+    broadcast("101 [INFO] New round will be start in 15 seconds.\n");
 }
 void BJ_RoomManager::join(User *u)
 {
@@ -564,7 +581,6 @@ void BJ_RoomManager::updateMember()
         // update state
         if (updateListen && (game_state == 0 || game_state == 1))
         {
-            broadcast("4 0\n");
             if (current_user == 0)
             {
                 die = true;
@@ -611,14 +627,14 @@ void BJ_RoomManager::updateMember()
                     }
                 }
             }
-            broadcast("3 0 Senpai\n");
+            broadcast("3 0 Senpai\n4 0\n");
         }
         if ((game_state == 0 || game_state == 1))
         {
             if (ready_player == current_user)
             {
-                broadcast("550 B\n555 20\n102 00100\n101 [INFO] You can place a bet by typing \"$2 [your bet]\".\n", -2);
-                broadcast("10 0 114514\n");
+                broadcast("550 B\n555 20\n102 00100\n", -2);
+                broadcast("10 0 114514\n101 [INFO] Round start!\n");
                 for (int i = 1; i <= 3; i++)
                 {
                     if (players[i] == nullptr)
@@ -626,7 +642,11 @@ void BJ_RoomManager::updateMember()
                         continue;
                     }
                     players[i]->state = 2;
+                    getcard(i, 0);
+                    getcard(i, 1);
                 }
+                getcard(0, 0);
+                getcard(0, 1);
                 timer.restart();
                 game_state = 2;
             }
@@ -670,6 +690,19 @@ void BJ_RoomManager::updateMember()
                     broadcast("10 " + to_string(p) + " " + to_string(bet[p]) + "\n");
                     if (players[p]->state == 5)
                     {
+                        send("102 01000\n", p);
+                        if (game_state == 2)
+                        {
+                            send("550 B\n", p);
+                        }
+                        else if (game_state == 3)
+                        {
+                            send("550 A\n", p);
+                        }
+                        else
+                        {
+                            send("550 O\n", p);
+                        }
                         continue;
                     }
                     send("11 " + to_string(p) + " 0 " + to_string(hand[p][0]) + "\n", p);
@@ -677,11 +710,11 @@ void BJ_RoomManager::updateMember()
                     broadcast("4 " + to_string(p) + "\n");
                     for (int i = 1; i <= 4; i++)
                     {
-                        if (hand[0][i] == -1)
+                        if (hand[p][i] == -1)
                         {
                             break;
                         }
-                        broadcast("11 0 " + to_string(i) + " " + to_string(hand[0][i]) + "\n");
+                        broadcast("11 " + to_string(p) + " " + to_string(i) + " " + to_string(hand[p][i]) + "\n");
                     }
                 }
             }
@@ -702,8 +735,8 @@ void BJ_RoomManager::updateMember()
             }
             if (cnt == ready_player)
             {
-                broadcast("550 A\n555 60\n102 00011\n");
-                broadcast("101 [INFO] You can hit or stand by typing \"$3\" or \"$4\".\n", -2);
+                broadcast("550 A\n555 60\n");
+                broadcast("102 00011\n101 [INFO] State change.\n", -2);
                 timer.restart();
                 game_state = 3;
             }
@@ -724,7 +757,9 @@ void BJ_RoomManager::updateMember()
             }
             if (cnt == ready_player)
             {
-                broadcast("550 O\n555 10\n102 01000\n");
+                broadcast("550 O\n555 15\n");
+                broadcast("102 01000\n101 [INFO] State change.\n", -2);
+                open();
                 timer.restart();
                 game_state = 4;
             }
@@ -735,6 +770,8 @@ void BJ_RoomManager::updateMember()
         // newround
         if (newround)
         {
+            timer.stop();
+            game_state = 0;
             if (cards.size() <= 52)
             {
                 broadcast("101 [INFO] card refersh.\n");
@@ -921,14 +958,14 @@ void BJ_RoomManager::msg_handle()
                     ss >> bpt;
                     if (ss.fail() || ss.eof() || bpt < 0 || bpt > players[i]->pt)
                     {
-                        send("101 [INFO] illegal bet. Please try again.\n", i);
+                        send("101 [INFO] illegal bet.\n", i);
                     }
                     else
                     {
                         bet[i] = bpt;
                         players[i]->pt -= bpt;
-                        send("17 " + to_string(players[i]->pt) + "\n102 00000\n101 [INFO] success. Please wait for other players.\n", i);
-                        broadcast("4 " + to_string(i) + " " + to_string(bpt) + "\n");
+                        send("17 " + to_string(players[i]->pt) + "\n102 00000\n101 [INFO] success.\n", i);
+                        broadcast("10 " + to_string(i) + " " + to_string(bpt) + "\n");
                         players[i]->state = 3;
                         update = true;
                     }
@@ -952,28 +989,24 @@ void BJ_RoomManager::msg_handle()
                 }
                 else if (op == 7 && players[i]->state == 3)
                 {
-                    int c = getcard();
+                    int pc = point_compute(i);
+                    if (pc == -1)
+                    {
+                        send("101 [INFO] You are bust, cannot hit more.\n", i);
+                        continue;
+                    }
+                    else if (pc == 21)
+                    {
+                        send("101 [INFO] You get Black Jack! cannot hit more.\n", i);
+                        continue;
+                    }
                     for (int j = 0; j <= 4; j++)
                     {
                         if (hand[i][j] == -1)
                         {
-                            hand[i][j] = c;
-                            broadcast("11 " + to_string(i) + " " + to_string(j) + " " + to_string(c) + "\n");
+                            getcard(i, j);
                             break;
                         }
-                    }
-                    int pc = point_compute(i);
-                    if (pc == -1)
-                    {
-                        players[i]->state = 4;
-                        update = true;
-                        send("102 00000\n101 [INFO] You bust, auto stand. Please wait for other players.\n", i);
-                    }
-                    else if (pc == 21)
-                    {
-                        players[i]->state = 4;
-                        update = true;
-                        send("102 00000\n101 [INFO] You get Black Jack! auto stand. Please wait for other players.\n", i);
                     }
                 }
                 else if (op == 8 && players[i]->state == 3)
@@ -1176,7 +1209,7 @@ bool CF_RoomManager::checkWin(int r, int c)
     for (int d = 0; d <= 3; d++)
     {
         tr = r, tc = c, cr = r + dr[d], cc = c + dc[d];
-        while (cr >= 1 && cr <= 6 && cc >= 1 && cc <= 7)
+        while (cr >= 0 && cr <= 5 && cc >= 0 && cc <= 6)
         {
             if (board[cc][cr] != current_round)
             {
@@ -1187,7 +1220,7 @@ bool CF_RoomManager::checkWin(int r, int c)
         }
         counter = 1;
         cr = tr - dr[d], cc = tc - dc[d];
-        while (cr >= 1 && cr <= 6 && cc >= 1 && cc <= 7)
+        while (cr >= 0 && cr <= 5 && cc >= 0 && cc <= 6)
         {
             if (board[cc][cr] != current_round)
             {
@@ -1387,9 +1420,9 @@ void CF_RoomManager::updateMember()
                 broadcast("101 [INFO] " + players[current_round]->name + " CONNECT FOUR!!!\n102 0100\n");
                 players[current_round]->pt += 1000;
                 send("18 W\n17 " + to_string(players[current_round]->pt) + "\n550 F\n555 5\n", current_round);
-                send("101 [INFO] You win! +1000 pt\n101 [INFO] The game is finish, you will return to the lobby in 5 secs. Bye~~\n", current_round);
+                send("101 [INFO] You win! +1000 pt\n101 [INFO] The game is finish, you will return to the lobby in 10 secs. Bye~~\n", current_round);
                 send("18 L\n550 F\n555 5\n", 1 - current_round);
-                send("101 [INFO] You Lose...\n101 [INFO] The game is finish, you will return to the lobby in 5 secs. Bye~~\n", 1 - current_round);
+                send("101 [INFO] You Lose...\n101 [INFO] The game is finish, you will return to the lobby in 10 secs. Bye~~\n", 1 - current_round);
                 timer.restart();
                 game_state = 3;
             }
@@ -1398,9 +1431,9 @@ void CF_RoomManager::updateMember()
                 broadcast("101 [INFO] " + players[current_round]->name + " surrend...\n102 0100\n");
                 players[1 - current_round]->pt += 1000;
                 send("18 W\n17 " + to_string(players[1 - current_round]->pt) + "\n550 F\n555 5\n", 1 - current_round);
-                send("101 [INFO] You win! +1000 pt\n101 [INFO] The game is finish, you will return to the lobby in 5 secs. Bye~~\n", 1 - current_round);
+                send("101 [INFO] You win! +1000 pt\n101 [INFO] The game is finish, you will return to the lobby in 10 secs. Bye~~\n", 1 - current_round);
                 send("18 L\n550 F\n555 5\n", current_round);
-                send("101 [INFO] You Lose...\n101 [INFO] The game is finish, you will return to the lobby in 5 secs. Bye~~\n", current_round);
+                send("101 [INFO] You Lose...\n101 [INFO] The game is finish, you will return to the lobby in 10 secs. Bye~~\n", current_round);
                 timer.restart();
                 game_state = 3;
             }
@@ -1551,13 +1584,13 @@ void CF_RoomManager::msg_handle()
                 {
                     int col, row;
                     ss >> col;
-                    if (ss.fail() || ss.eof() || col <= 0 || col > 7)
+                    if (ss.fail() || ss.eof() || col < 0 || col > 6)
                     {
-                        row = 0;
+                        row = -1;
                     }
                     else
                     {
-                        for (row = 6; row >= 1; row--)
+                        for (row = 5; row >= 0; row--)
                         {
                             if (board[col][row] != -1)
                             {
@@ -1578,7 +1611,7 @@ void CF_RoomManager::msg_handle()
                             break;
                         }
                     }
-                    if (row == 0)
+                    if (row == -1)
                     {
                         send("101 [INFO] illegal column. Please try again.\n", i);
                     }
@@ -1636,7 +1669,7 @@ void CF_RoomManager::time_handle()
         break;
 
     case 3:
-        TO = 5;
+        TO = 10;
         break;
 
     default:

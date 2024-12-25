@@ -59,7 +59,7 @@ public:
     void send(string, int);
     void setcard();
     void sethand();
-    int getcard();
+    void getcard(int, int);
     void msg_wait();
     void msg_handle();
     void time_handle();
