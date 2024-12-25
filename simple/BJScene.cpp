@@ -13,22 +13,22 @@ void BJScene::init() {
         ErrorHandler::printError(FONT_NOT_FOUND);
     }
     // Set input box place and size
-    input_box.setSize(sf::Vector2f(180, 40));
-    input_box.setPosition(610, 550);
+    input_box.setSize(sf::Vector2f(210, 40));
+    input_box.setPosition(580, 550);
     input_box.setFillColor(sf::Color(200, 200, 200));
 
     // Set input text place and size
     input_text.setFont(font);
     input_text.setFillColor(sf::Color::Black);
     input_text.setCharacterSize(20);
-    input_text.setPosition(615, 555);
+    input_text.setPosition(585, 555);
 
     // Clear history message
     messages.clear();
 
     // Set message box place and size
-    message_box.setSize(sf::Vector2f(180, 260));
-    message_box.setPosition(610, 280);
+    message_box.setSize(sf::Vector2f(210, 260));
+    message_box.setPosition(580, 280);
     message_box.setFillColor(sf::Color(220, 220, 220));
 
     // Set history message text place and size
@@ -85,7 +85,7 @@ void BJScene::init() {
     game_state_text.setFont(font);
     game_state_text.setCharacterSize(30);
     game_state_text.setFillColor(sf::Color::Black);
-    game_state_text.setPosition(615, 10);
+    game_state_text.setPosition(585, 10);
 
     // Set last time place and size
     last_time = 0;
@@ -93,7 +93,7 @@ void BJScene::init() {
     last_time_text.setFont(font);
     last_time_text.setCharacterSize(30);
     last_time_text.setFillColor(sf::Color::Black);
-    last_time_text.setPosition(615, 50);
+    last_time_text.setPosition(585, 50);
 
     // Set player's current point place and size
     current_point = 0;
@@ -101,7 +101,7 @@ void BJScene::init() {
     current_point_text.setFont(font);
     current_point_text.setCharacterSize(30);
     current_point_text.setFillColor(sf::Color::Black);
-    current_point_text.setPosition(615, 90);
+    current_point_text.setPosition(585, 90);
 
     // Set commands place and size
     commands = std::vector<std::string>(8, "");
@@ -235,7 +235,7 @@ void BJScene::blit(sf::RenderWindow* window) {
     float yoffset = 285;
     for (auto& message : messages) {
         message_text.setString(message);
-        message_text.setPosition(615, yoffset);
+        message_text.setPosition(585, yoffset);
         window->draw(message_text);
         yoffset += 25;
     }
@@ -386,7 +386,7 @@ void BJScene::handleMessage(std::string chatinfo) {
     int start = 0;
     int length = 0;
     while(start < chatinfo.size()) {
-        length = (17 < chatinfo.size()-start) ? 17 : chatinfo.size()-start;
+        length = (20 < chatinfo.size()-start) ? 20 : chatinfo.size()-start;
         messages.push_back(chatinfo.substr(start, length));
         if (messages.size() > max_lines) {
             messages.pop_front();
