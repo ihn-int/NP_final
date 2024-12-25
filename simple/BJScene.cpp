@@ -253,6 +253,7 @@ void BJScene::parseOps(std::string op) {
     std::string token;
     char abbr;
     int number;
+    int number2;
     std::string chatinfo = "";
     opstream >> opcode;
     switch(opcode) {
@@ -345,19 +346,9 @@ void BJScene::parseOps(std::string op) {
             user_pts[index] = number;
             break;
         case 11:   // player gets card
-            opstream >> index >> number;
+            opstream >> index >> number >> number2;
             // linear search for the first empty card slot
-            for (int i = 0; i < 5; i++) {
-                if (user_cards[index][i] == "") {
-                    // slot i is available
-                    user_cards[index][i] = card_files[number];
-                    break;
-                }
-            }
-            break;
-        case 16:   // open first card of user
-            opstream >> index >> number;
-            user_cards[index][0] = card_files[number];
+            user_cards[index][number] = card_files[number2];
             break;
         default:
             std::printf("[INFO] Unknown instruction.\n");
